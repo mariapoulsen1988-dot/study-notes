@@ -630,6 +630,49 @@ function renderContent() {
     });
   }
 
+  function goToCard(newIndex) {
+    if (newIndex < 0 || newIndex >= week.flashcards.length || newIndex === activeCardIndex) return;
+    activeCardIndex = newIndex;
+    saveState();
+    renderMain();
+    renderStrip();
+  }
+
+  let touchStartX = 0;
+  let touchStartY = 0;
+  let touchTracking = false;
+
+  mainWrap.addEventListener(
+    "touchstart",
+    (e) => {
+      if (e.touches.length !== 1) return;
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+      touchTracking = true;
+    },
+    { passive: true }
+  );
+
+  mainWrap.addEventListener(
+    "touchend",
+    (e) => {
+      if (!touchTracking) return;
+      touchTracking = false;
+      const touch = e.changedTouches[0];
+      const dx = touch.clientX - touchStartX;
+      const dy = touch.clientY - touchStartY;
+      const SWIPE_THRESHOLD = 50;
+      if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy) * 1.5) {
+        if (dx < 0) {
+          goToCard(activeCardIndex + 1);
+        } else {
+          goToCard(activeCardIndex - 1);
+        }
+      }
+    },
+    { passive: true }
+  );
+
   renderMain();
   renderStrip();
 

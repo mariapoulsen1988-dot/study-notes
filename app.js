@@ -559,8 +559,27 @@ function renderContent() {
   const stage = document.createElement("div");
   stage.className = "flashcard-stage";
 
+  const mainRow = document.createElement("div");
+  mainRow.className = "flashcard-main-row";
+
   const mainWrap = document.createElement("div");
   mainWrap.className = "flashcard-main-wrap";
+
+  const cardPrevBtn = document.createElement("button");
+  cardPrevBtn.className = "strip-arrow card-nav-arrow card-nav-prev";
+  cardPrevBtn.setAttribute("aria-label", "Previous card");
+  cardPrevBtn.textContent = "‹";
+  cardPrevBtn.addEventListener("click", () => {
+    goToCard(activeCardIndex - 1);
+  });
+
+  const cardNextBtn = document.createElement("button");
+  cardNextBtn.className = "strip-arrow card-nav-arrow card-nav-next";
+  cardNextBtn.setAttribute("aria-label", "Next card");
+  cardNextBtn.textContent = "›";
+  cardNextBtn.addEventListener("click", () => {
+    goToCard(activeCardIndex + 1);
+  });
 
   const stripRow = document.createElement("div");
   stripRow.className = "flashcard-strip-row";
@@ -596,6 +615,8 @@ function renderContent() {
         renderStrip();
       })
     );
+    cardPrevBtn.disabled = activeCardIndex <= 0;
+    cardNextBtn.disabled = activeCardIndex >= week.flashcards.length - 1;
   }
 
   function renderStrip() {
@@ -727,7 +748,11 @@ function renderContent() {
   stripRow.appendChild(strip);
   stripRow.appendChild(nextBtn);
 
-  stage.appendChild(mainWrap);
+  mainRow.appendChild(cardPrevBtn);
+  mainRow.appendChild(mainWrap);
+  mainRow.appendChild(cardNextBtn);
+
+  stage.appendChild(mainRow);
   stage.appendChild(stripRow);
   contentEl.appendChild(stage);
 }

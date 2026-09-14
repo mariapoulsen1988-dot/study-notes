@@ -520,6 +520,14 @@ h1 {
     margin-top: 18px;
   }
 
+  body:not(.week-focused) .content {
+    display: none;
+  }
+
+  .strip-arrow {
+    display: none;
+  }
+
   .flashcard.flashcard-main {
     height: 480px;
   }

@@ -646,16 +646,19 @@ h1 {
   }
 
   body.week-focused .content {
-    margin-top: 0;
-    padding-top: calc(56px + env(safe-area-inset-top));
-    padding-bottom: calc(84px + env(safe-area-inset-bottom));
-    min-height: 100vh;
+    margin: 0;
+    padding-top: calc(48px + env(safe-area-inset-top));
+    padding-bottom: calc(94px + env(safe-area-inset-bottom));
     box-sizing: border-box;
   }
 
+  body.week-focused .flashcard-stage {
+    margin: 0;
+  }
+
   body.week-focused .flashcard.flashcard-main {
-    height: 60vh;
-    max-height: 620px;
+    height: calc(100vh - 48px - env(safe-area-inset-top) - 94px - env(safe-area-inset-bottom));
+    height: calc(100dvh - 48px - env(safe-area-inset-top) - 94px - env(safe-area-inset-bottom));
   }
 
   body.week-focused .flashcard-strip-row {

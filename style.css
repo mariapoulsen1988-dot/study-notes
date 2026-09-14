@@ -438,6 +438,17 @@ h1 {
   font-family: inherit;
 }
 
+.flashcard-mini-num {
+  display: none;
+}
+
+.flashcard-mini-text {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+}
+
 .flashcard-mini:hover {
   border-color: var(--accent2);
 }
@@ -547,8 +558,98 @@ h1 {
   }
 
   .flashcard-mini {
-    flex-basis: 150px;
-    height: 100px;
+    flex: 0 0 44px;
+    height: 44px;
+    border-radius: 50%;
+    padding: 0;
+  }
+
+  .flashcard-mini-num {
+    display: block;
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
+
+  .flashcard-mini-text {
+    display: none;
+  }
+
+  /* ---------- Focused week view: fixed top bar + fixed bottom strip ---------- */
+
+  body.week-focused {
+    overflow: hidden;
+  }
+
+  body.week-focused .app-header,
+  body.week-focused .course-tabs,
+  body.week-focused .week-nav {
+    display: none;
+  }
+
+  body.week-focused .week-pill-btn:not([hidden]) {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 30;
+    margin: 0;
+    width: 100%;
+    border-radius: 0;
+    border: none;
+    border-bottom: 1px solid var(--border);
+    padding: calc(12px + env(safe-area-inset-top)) 16px 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  }
+
+  body.week-focused .week-pill-btn:not([hidden])::before {
+    content: "‹";
+    font-size: 1.4rem;
+    line-height: 1;
+  }
+
+  body.week-focused .content {
+    height: 100vh;
+    height: 100dvh;
+    margin-top: 0;
+    padding-top: calc(56px + env(safe-area-inset-top));
+    padding-bottom: calc(84px + env(safe-area-inset-bottom));
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+
+  body.week-focused .flashcard-stage {
+    flex: 1;
+    min-height: 0;
+  }
+
+  body.week-focused .flashcard-main-wrap {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+  }
+
+  body.week-focused .flashcard.flashcard-main {
+    flex: 1;
+    height: auto;
+    min-height: 0;
+  }
+
+  body.week-focused .flashcard-strip-row {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 30;
+    max-width: none;
+    margin: 0;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.06);
   }
 }
 
@@ -560,6 +661,7 @@ h1 {
   }
 
   .flashcard-mini {
-    flex-basis: 130px;
+    flex: 0 0 38px;
+    height: 38px;
   }
 }

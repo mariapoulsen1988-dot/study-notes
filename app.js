@@ -239,6 +239,8 @@ weekPillBtn.addEventListener("click", () => {
 });
 
 function updateWeekPill() {
+  document.body.classList.toggle("week-focused", weekNavCollapsed);
+
   if (weekNavCollapsed) {
     weekPillBtn.hidden = false;
     weekPillBtn.textContent = "Week " + activeWeek + " · change week ▾";
@@ -360,7 +362,19 @@ function renderContent() {
     week.flashcards.forEach((card, i) => {
       const mini = document.createElement("button");
       mini.className = "flashcard-mini" + (i === activeCardIndex ? " active" : "");
-      mini.textContent = card.q;
+      mini.setAttribute("aria-label", card.q);
+
+      const num = document.createElement("span");
+      num.className = "flashcard-mini-num";
+      num.textContent = String(i + 1);
+
+      const text = document.createElement("span");
+      text.className = "flashcard-mini-text";
+      text.textContent = card.q;
+
+      mini.appendChild(num);
+      mini.appendChild(text);
+
       mini.addEventListener("click", () => {
         activeCardIndex = i;
         saveState();

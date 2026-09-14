@@ -424,6 +424,11 @@ let activeCourse = Object.keys(COURSES)[0];
 let activeWeek = 1;
 let activeCardIndex = 0;
 let weekNavCollapsed = false;
+let cardStatusByWeek = {};
+
+function weekStatusKey(course, week) {
+  return course + ":" + week;
+}
 
 function loadState() {
   try {
@@ -434,6 +439,9 @@ function loadState() {
     if (typeof state.week === "number" && state.week >= 1 && state.week <= NUM_WEEKS) activeWeek = state.week;
     if (typeof state.cardIndex === "number" && state.cardIndex >= 0) activeCardIndex = state.cardIndex;
     if (typeof state.collapsed === "boolean") weekNavCollapsed = state.collapsed;
+    if (state.cardStatusByWeek && typeof state.cardStatusByWeek === "object") {
+      cardStatusByWeek = state.cardStatusByWeek;
+    }
   } catch (e) {
     // localStorage unavailable or corrupt — just start fresh
   }
@@ -443,7 +451,13 @@ function saveState() {
   try {
     localStorage.setItem(
       STORAGE_KEY,
-      JSON.stringify({ course: activeCourse, week: activeWeek, cardIndex: activeCardIndex, collapsed: weekNavCollapsed })
+      JSON.stringify({
+        course: activeCourse,
+        week: activeWeek,
+        cardIndex: activeCardIndex,
+        collapsed: weekNavCollapsed,
+        cardStatusByWeek: cardStatusByWeek,
+      })
     );
   } catch (e) {
     // ignore — e.g. private browsing with storage disabled
@@ -532,6 +546,7 @@ function renderWeekNav() {
       activeWeek = w;
       activeCardIndex = 0;
       weekNavCollapsed = true;
+      delete cardStatusByWeek[weekStatusKey(activeCourse, w)];
       saveState();
       renderWeekNav();
       renderContent();
@@ -587,7 +602,11 @@ function renderContent() {
   const strip = document.createElement("div");
   strip.className = "flashcard-strip";
 
-  const cardStatus = new Array(week.flashcards.length).fill(null);
+  const statusKey = weekStatusKey(activeCourse, activeWeek);
+  if (!Array.isArray(cardStatusByWeek[statusKey]) || cardStatusByWeek[statusKey].length !== week.flashcards.length) {
+    cardStatusByWeek[statusKey] = new Array(week.flashcards.length).fill(null);
+  }
+  const cardStatus = cardStatusByWeek[statusKey];
 
   function renderMain() {
     mainWrap.innerHTML = "";
@@ -596,6 +615,7 @@ function renderContent() {
     mainWrap.appendChild(
       buildQuizCard(card, (isCorrect) => {
         cardStatus[cardIndexAtRender] = isCorrect ? "correct" : "wrong";
+        saveState();
         renderStrip();
       })
     );

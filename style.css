@@ -665,6 +665,12 @@ h1 {
     min-height: 0;
   }
 
+  body.week-focused .flashcard-main-row {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+  }
+
   body.week-focused .flashcard-main-wrap {
     flex: 1;
     min-height: 0;

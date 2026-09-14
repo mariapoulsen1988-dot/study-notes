@@ -480,14 +480,14 @@ h1 {
 }
 
 .flashcard-mini.status-correct {
-  background: #5f8a68;
-  border-color: #4a6f52;
+  background: #6f9483;
+  border-color: #587a6b;
   color: #fff;
 }
 
 .flashcard-mini.status-wrong {
-  background: #a85c50;
-  border-color: #8a483e;
+  background: #b56d6a;
+  border-color: #96544f;
   color: #fff;
 }
 
@@ -669,6 +669,7 @@ h1 {
     flex: 1;
     min-height: 0;
     display: flex;
+    align-items: stretch;
   }
 
   body.week-focused .flashcard-main-wrap {

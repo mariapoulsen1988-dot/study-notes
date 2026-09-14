@@ -192,6 +192,7 @@ const STORAGE_KEY = "study-notes-state";
 let activeCourse = Object.keys(COURSES)[0];
 let activeWeek = 1;
 let activeCardIndex = 0;
+let weekNavCollapsed = false;
 
 function loadState() {
   try {
@@ -223,12 +224,27 @@ const courseTabsEl = document.getElementById("course-tabs");
 const weekNavEl = document.getElementById("week-nav");
 const contentEl = document.getElementById("content");
 const quoteBarEl = document.getElementById("quote-bar");
+const weekPillBtn = document.getElementById("week-pill-btn");
 
 function initApp() {
   renderCourseTabs();
   renderWeekNav();
   renderContent();
   initQuoteCycle();
+}
+
+weekPillBtn.addEventListener("click", () => {
+  weekNavCollapsed = false;
+  renderWeekNav();
+});
+
+function updateWeekPill() {
+  if (weekNavCollapsed) {
+    weekPillBtn.hidden = false;
+    weekPillBtn.textContent = "Week " + activeWeek + " · change week ▾";
+  } else {
+    weekPillBtn.hidden = true;
+  }
 }
 
 initApp();
@@ -258,6 +274,7 @@ function renderCourseTabs() {
       activeCourse = key;
       activeWeek = 1;
       activeCardIndex = 0;
+      weekNavCollapsed = false;
       saveState();
       renderCourseTabs();
       renderWeekNav();
@@ -268,6 +285,9 @@ function renderCourseTabs() {
 }
 
 function renderWeekNav() {
+  weekNavEl.classList.toggle("collapsed", weekNavCollapsed);
+  updateWeekPill();
+
   weekNavEl.innerHTML = "";
   for (let w = 1; w <= NUM_WEEKS; w++) {
     const btn = document.createElement("button");
@@ -276,6 +296,7 @@ function renderWeekNav() {
     btn.addEventListener("click", () => {
       activeWeek = w;
       activeCardIndex = 0;
+      weekNavCollapsed = true;
       saveState();
       renderWeekNav();
       renderContent();

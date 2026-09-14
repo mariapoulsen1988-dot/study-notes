@@ -641,6 +641,13 @@ function renderContent() {
   let touchStartX = 0;
   let touchStartY = 0;
   let touchTracking = false;
+  let touchDx = 0;
+  let swipeDecided = null;
+
+  function snapBack() {
+    mainWrap.style.transition = "transform 0.18s ease";
+    mainWrap.style.transform = "translateX(0)";
+  }
 
   mainWrap.addEventListener(
     "touchstart",
@@ -649,26 +656,66 @@ function renderContent() {
       touchStartX = e.touches[0].clientX;
       touchStartY = e.touches[0].clientY;
       touchTracking = true;
+      touchDx = 0;
+      swipeDecided = null;
+      mainWrap.style.transition = "none";
+    },
+    { passive: true }
+  );
+
+  mainWrap.addEventListener(
+    "touchmove",
+    (e) => {
+      if (!touchTracking || e.touches.length !== 1) return;
+      const dx = e.touches[0].clientX - touchStartX;
+      const dy = e.touches[0].clientY - touchStartY;
+
+      if (swipeDecided === null && (Math.abs(dx) > 8 || Math.abs(dy) > 8)) {
+        swipeDecided = Math.abs(dx) > Math.abs(dy) * 1.2;
+      }
+      if (swipeDecided) {
+        touchDx = dx;
+        mainWrap.style.transform = "translateX(" + dx + "px)";
+      }
     },
     { passive: true }
   );
 
   mainWrap.addEventListener(
     "touchend",
-    (e) => {
+    () => {
       if (!touchTracking) return;
       touchTracking = false;
-      const touch = e.changedTouches[0];
-      const dx = touch.clientX - touchStartX;
-      const dy = touch.clientY - touchStartY;
-      const SWIPE_THRESHOLD = 50;
-      if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy) * 1.5) {
-        if (dx < 0) {
-          goToCard(activeCardIndex + 1);
-        } else {
-          goToCard(activeCardIndex - 1);
+      const dx = touchDx;
+      const SWIPE_THRESHOLD = 60;
+
+      if (swipeDecided && Math.abs(dx) > SWIPE_THRESHOLD) {
+        const goingNext = dx < 0;
+        const targetIndex = activeCardIndex + (goingNext ? 1 : -1);
+        if (targetIndex >= 0 && targetIndex < week.flashcards.length) {
+          mainWrap.style.transition = "transform 0.16s ease";
+          mainWrap.style.transform = "translateX(" + (goingNext ? -80 : 80) + "px)";
+          setTimeout(() => {
+            activeCardIndex = targetIndex;
+            saveState();
+            mainWrap.style.transition = "none";
+            renderMain();
+            renderStrip();
+            mainWrap.style.transform = "translateX(0)";
+          }, 160);
+          return;
         }
       }
+      snapBack();
+    },
+    { passive: true }
+  );
+
+  mainWrap.addEventListener(
+    "touchcancel",
+    () => {
+      touchTracking = false;
+      snapBack();
     },
     { passive: true }
   );

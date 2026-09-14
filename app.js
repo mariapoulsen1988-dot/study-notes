@@ -607,6 +607,7 @@ function renderContent() {
     cardStatusByWeek[statusKey] = new Array(week.flashcards.length).fill(null);
   }
   const cardStatus = cardStatusByWeek[statusKey];
+  let stripHasCentered = false;
 
   function renderMain() {
     mainWrap.innerHTML = "";
@@ -656,7 +657,12 @@ function renderContent() {
 
     const activeMini = strip.querySelector(".flashcard-mini.active");
     if (activeMini && typeof activeMini.scrollIntoView === "function") {
-      activeMini.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+      const behavior = stripHasCentered ? "smooth" : "auto";
+      stripHasCentered = true;
+      const raf = typeof requestAnimationFrame === "function" ? requestAnimationFrame : (fn) => setTimeout(fn, 0);
+      raf(() => {
+        activeMini.scrollIntoView({ behavior, inline: "center", block: "nearest" });
+      });
     }
   }
 

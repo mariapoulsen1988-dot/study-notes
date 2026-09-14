@@ -615,10 +615,6 @@ h1 {
 
   /* ---------- Focused week view: fixed top bar + fixed bottom strip ---------- */
 
-  body.week-focused {
-    overflow: hidden;
-  }
-
   body.week-focused .app-header,
   body.week-focused .course-tabs,
   body.week-focused .week-nav {
@@ -650,38 +646,16 @@ h1 {
   }
 
   body.week-focused .content {
-    height: 100vh;
-    height: 100dvh;
     margin-top: 0;
     padding-top: calc(56px + env(safe-area-inset-top));
     padding-bottom: calc(84px + env(safe-area-inset-bottom));
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
-  }
-
-  body.week-focused .flashcard-stage {
-    flex: 1;
-    min-height: 0;
-  }
-
-  body.week-focused .flashcard-main-row {
-    flex: 1;
-    min-height: 0;
-    display: flex;
-    align-items: stretch;
-  }
-
-  body.week-focused .flashcard-main-wrap {
-    flex: 1;
-    min-height: 0;
-    display: flex;
+    min-height: 100vh;
+    box-sizing: border-box;
   }
 
   body.week-focused .flashcard.flashcard-main {
-    flex: 1;
-    height: auto;
-    min-height: 0;
+    height: 60vh;
+    max-height: 620px;
   }
 
   body.week-focused .flashcard-strip-row {

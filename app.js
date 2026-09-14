@@ -433,6 +433,7 @@ function loadState() {
     if (state.course && COURSES[state.course]) activeCourse = state.course;
     if (typeof state.week === "number" && state.week >= 1 && state.week <= NUM_WEEKS) activeWeek = state.week;
     if (typeof state.cardIndex === "number" && state.cardIndex >= 0) activeCardIndex = state.cardIndex;
+    if (typeof state.collapsed === "boolean") weekNavCollapsed = state.collapsed;
   } catch (e) {
     // localStorage unavailable or corrupt — just start fresh
   }
@@ -442,7 +443,7 @@ function saveState() {
   try {
     localStorage.setItem(
       STORAGE_KEY,
-      JSON.stringify({ course: activeCourse, week: activeWeek, cardIndex: activeCardIndex })
+      JSON.stringify({ course: activeCourse, week: activeWeek, cardIndex: activeCardIndex, collapsed: weekNavCollapsed })
     );
   } catch (e) {
     // ignore — e.g. private browsing with storage disabled
@@ -466,6 +467,7 @@ function initApp() {
 
 weekPillBtn.addEventListener("click", () => {
   weekNavCollapsed = false;
+  saveState();
   renderWeekNav();
 });
 
@@ -582,17 +584,29 @@ function renderContent() {
   const strip = document.createElement("div");
   strip.className = "flashcard-strip";
 
+  const cardStatus = new Array(week.flashcards.length).fill(null);
+
   function renderMain() {
     mainWrap.innerHTML = "";
     const card = week.flashcards[activeCardIndex];
-    mainWrap.appendChild(buildQuizCard(card));
+    const cardIndexAtRender = activeCardIndex;
+    mainWrap.appendChild(
+      buildQuizCard(card, (isCorrect) => {
+        cardStatus[cardIndexAtRender] = isCorrect ? "correct" : "wrong";
+        renderStrip();
+      })
+    );
   }
 
   function renderStrip() {
     strip.innerHTML = "";
     week.flashcards.forEach((card, i) => {
       const mini = document.createElement("button");
-      mini.className = "flashcard-mini" + (i === activeCardIndex ? " active" : "");
+      mini.className =
+        "flashcard-mini" +
+        (i === activeCardIndex ? " active" : "") +
+        (cardStatus[i] === "correct" ? " status-correct" : "") +
+        (cardStatus[i] === "wrong" ? " status-wrong" : "");
       mini.setAttribute("aria-label", card.q);
 
       const num = document.createElement("span");
@@ -637,7 +651,7 @@ function shuffledOptions(card) {
   return options;
 }
 
-function buildQuizCard(cardData) {
+function buildQuizCard(cardData, onFirstAttempt) {
   const card = document.createElement("div");
   card.className = "flashcard flashcard-main";
 
@@ -703,6 +717,7 @@ function buildQuizCard(cardData) {
     hintMsg.className = "flashcard-try-again";
     const options = shuffledOptions(cardData);
     let solved = false;
+    let firstAttemptDone = false;
 
     options.forEach((opt) => {
       const btn = document.createElement("button");
@@ -713,6 +728,11 @@ function buildQuizCard(cardData) {
       btn.addEventListener("click", (e) => {
         e.stopPropagation();
         if (solved || btn.disabled) return;
+
+        if (!firstAttemptDone) {
+          firstAttemptDone = true;
+          if (onFirstAttempt) onFirstAttempt(opt.isCorrect);
+        }
 
         if (opt.isCorrect) {
           solved = true;

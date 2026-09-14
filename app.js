@@ -647,10 +647,7 @@ function renderContent() {
       mini.appendChild(text);
 
       mini.addEventListener("click", () => {
-        activeCardIndex = i;
-        saveState();
-        renderMain();
-        renderStrip();
+        goToCard(i);
       });
       strip.appendChild(mini);
     });
@@ -666,12 +663,29 @@ function renderContent() {
     }
   }
 
-  function goToCard(newIndex) {
-    if (newIndex < 0 || newIndex >= week.flashcards.length || newIndex === activeCardIndex) return;
-    activeCardIndex = newIndex;
-    saveState();
-    renderMain();
-    renderStrip();
+  function goToCard(targetIndex) {
+    if (targetIndex < 0 || targetIndex >= week.flashcards.length || targetIndex === activeCardIndex) return;
+    const goingNext = targetIndex > activeCardIndex;
+    const width = mainWrap.offsetWidth || 300;
+
+    mainWrap.style.transition = "transform 0.2s ease";
+    mainWrap.style.transform = "translateX(" + (goingNext ? -width : width) + "px)";
+
+    setTimeout(() => {
+      activeCardIndex = targetIndex;
+      saveState();
+
+      mainWrap.style.transition = "none";
+      mainWrap.style.transform = "translateX(" + (goingNext ? width : -width) + "px)";
+
+      renderMain();
+      renderStrip();
+
+      void mainWrap.offsetWidth;
+
+      mainWrap.style.transition = "transform 0.2s ease";
+      mainWrap.style.transform = "translateX(0)";
+    }, 200);
   }
 
   let touchStartX = 0;
@@ -729,16 +743,7 @@ function renderContent() {
         const goingNext = dx < 0;
         const targetIndex = activeCardIndex + (goingNext ? 1 : -1);
         if (targetIndex >= 0 && targetIndex < week.flashcards.length) {
-          mainWrap.style.transition = "transform 0.16s ease";
-          mainWrap.style.transform = "translateX(" + (goingNext ? -80 : 80) + "px)";
-          setTimeout(() => {
-            activeCardIndex = targetIndex;
-            saveState();
-            mainWrap.style.transition = "none";
-            renderMain();
-            renderStrip();
-            mainWrap.style.transform = "translateX(0)";
-          }, 160);
+          goToCard(targetIndex);
           return;
         }
       }

@@ -584,22 +584,6 @@ function renderContent() {
   const stripRow = document.createElement("div");
   stripRow.className = "flashcard-strip-row";
 
-  const prevBtn = document.createElement("button");
-  prevBtn.className = "strip-arrow strip-arrow-prev";
-  prevBtn.setAttribute("aria-label", "Scroll left");
-  prevBtn.textContent = "‹";
-  prevBtn.addEventListener("click", () => {
-    strip.scrollBy({ left: -260, behavior: "smooth" });
-  });
-
-  const nextBtn = document.createElement("button");
-  nextBtn.className = "strip-arrow strip-arrow-next";
-  nextBtn.setAttribute("aria-label", "Scroll right");
-  nextBtn.textContent = "›";
-  nextBtn.addEventListener("click", () => {
-    strip.scrollBy({ left: 260, behavior: "smooth" });
-  });
-
   const strip = document.createElement("div");
   strip.className = "flashcard-strip";
 
@@ -649,6 +633,11 @@ function renderContent() {
       });
       strip.appendChild(mini);
     });
+
+    const activeMini = strip.querySelector(".flashcard-mini.active");
+    if (activeMini && typeof activeMini.scrollIntoView === "function") {
+      activeMini.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+    }
   }
 
   function goToCard(newIndex) {
@@ -691,8 +680,8 @@ function renderContent() {
       const dx = e.touches[0].clientX - touchStartX;
       const dy = e.touches[0].clientY - touchStartY;
 
-      if (swipeDecided === null && (Math.abs(dx) > 8 || Math.abs(dy) > 8)) {
-        swipeDecided = Math.abs(dx) > Math.abs(dy) * 1.2;
+      if (swipeDecided === null && (Math.abs(dx) > 6 || Math.abs(dy) > 6)) {
+        swipeDecided = Math.abs(dx) > Math.abs(dy);
       }
       if (swipeDecided) {
         touchDx = dx;
@@ -708,7 +697,7 @@ function renderContent() {
       if (!touchTracking) return;
       touchTracking = false;
       const dx = touchDx;
-      const SWIPE_THRESHOLD = 60;
+      const SWIPE_THRESHOLD = 30;
 
       if (swipeDecided && Math.abs(dx) > SWIPE_THRESHOLD) {
         const goingNext = dx < 0;
@@ -744,9 +733,7 @@ function renderContent() {
   renderMain();
   renderStrip();
 
-  stripRow.appendChild(prevBtn);
   stripRow.appendChild(strip);
-  stripRow.appendChild(nextBtn);
 
   mainRow.appendChild(cardPrevBtn);
   mainRow.appendChild(mainWrap);

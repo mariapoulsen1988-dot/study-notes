@@ -1141,7 +1141,227 @@ const COURSES = {
           },
         ],
       },
-      3: null,
+      3: {
+        flashcards: [
+          {
+            type: "think",
+            think: true,
+            q: "Walk vs path vs shortest path: define all three, then give an example of a walk of length 4 in a triangle that is not a path.",
+            a: "A walk is any sequence of nodes where each consecutive pair is linked — nodes and edges can repeat. A path is a walk that never repeats a node. The shortest path between two nodes is the path with the fewest edges; its length is their distance.\n\nExample in a triangle {A,B,C} (edges A-B, B-C, C-A): the walk A→B→A→B→C has length 4 and is valid (each consecutive pair is a real edge), but it revisits A and B, so it is not a path.",
+          },
+          {
+            type: "think",
+            think: true,
+            q: "Explain BFS to someone who has never seen it, in five sentences or fewer, and say why the ring a node lands in is guaranteed to be its shortest distance from the start.",
+            a: "Start at your chosen node and mark it distance 0. Look at all of its direct neighbors — anyone not yet marked gets distance 1. Then look at the neighbors of those distance-1 nodes — anyone still unmarked gets distance 2. Keep expanding outward ring by ring, marking each brand-new node one more than the ring it was found from, until nothing new appears.\n\nWhy the ring guarantees shortest distance: BFS only explores nodes at distance d+1 after it has fully explored every node at distance d, so it's structurally impossible to first discover a node too early — reaching it requires passing through an already-discovered node exactly one ring closer. The ring where a node is first found is therefore necessarily its minimum possible distance.",
+          },
+          {
+            type: "think",
+            think: true,
+            q: "In a directed network, d_AB=2 and d_BA=∞. Draw the smallest network in which that is true. What do 'weakly connected' and 'strongly connected' mean, and which of them does your drawing have?",
+            a: "Smallest example: three nodes A, X, B with edges A→X and X→B, and no edges at all leading back toward A or X. Then d_AB=2 (via A-X-B) and d_BA=∞ (B has no way to reach A or X at all).\n\nWeakly connected: connected if you ignore direction — there's some path between every pair when edges are treated as undirected. Strongly connected: every node can reach every other node while following the arrows.\n\nThis drawing is weakly connected (A-X-B forms a connected chain ignoring direction) but not strongly connected (B cannot reach A or X).",
+          },
+          {
+            type: "think",
+            think: true,
+            q: "The Marvel network has ⟨d⟩=2.67. The random network with the same n and m (your table from week 2) has ⟨d⟩=2.8. Is the real network's value evidence of anything? What would be?",
+            a: "Not really — 2.67 vs 2.8 is a small, unremarkable gap, and short paths show up in many kinds of networks, random ones included. Short distances alone were already established as weak evidence of anything special (both random graphs and real small-world networks have them).\n\nWhat would be evidence: comparing CLUSTERING to the same random baseline instead. Marvel's clustering (≈0.31) is roughly ten times the random network's (≈0.03) — a stark, genuine gap that distance comparisons don't show. A real finding needs a null model and a z-score or p-value, not just eyeballing one loosely-informative number.",
+          },
+          {
+            type: "think",
+            think: true,
+            q: "Draw this network: nodes 1-8, links 1-2, 1-3, 2-4, 3-4, 4-5, 5-6, 5-7, 7-8. Run BFS from node 1. Write the nodes ring by ring. What is the eccentricity of node 1 (its distance to the farthest node)?",
+            diagram: { graph: "week3chain" },
+            a: "Rings from node 1:\n• distance 0: {1}\n• distance 1: {2, 3}\n• distance 2: {4}\n• distance 3: {5}\n• distance 4: {6, 7}\n• distance 5: {8}\n\nThe farthest node is 8, at distance 5 — so node 1's eccentricity is 5.",
+          },
+          {
+            think: true,
+            q: "In the network 1-2, 1-3, 2-4, 3-4, 4-5, 5-6, 5-7, 7-8: what is node 1's eccentricity (BFS from node 1)?",
+            choices: ["5 — node 8 is 5 steps away", "3", "8", "1"],
+            correct: 0,
+            a: "BFS from 1 reaches {2,3} at distance 1, {4} at 2, {5} at 3, {6,7} at 4, and {8} at 5 — the farthest node is 8.",
+          },
+          {
+            type: "think",
+            think: true,
+            q: "Same network (nodes 1-8, links 1-2, 1-3, 2-4, 3-4, 4-5, 5-6, 5-7, 7-8). Run BFS from node 5. Which nodes are the network's center (smallest eccentricity), and what is the diameter?",
+            diagram: { graph: "week3chain" },
+            a: "Eccentricity of every node (by BFS from each): 1→5, 2→4, 3→4, 4→3, 5→3, 6→4, 7→4, 8→5.\n\nSmallest eccentricity is 3, shared by nodes 4 and 5 — they are the network's center (this network is the 'diamond {1,2,3,4} plus a branching tail 4-5-6/7-8', and the center sits right at the two nodes bridging those parts).\n\nDiameter = the largest eccentricity = 5 (the distance between the two extreme ends, nodes 1 and 8).",
+          },
+          {
+            think: true,
+            q: "In that same 8-node network, which nodes form the center (smallest eccentricity)?",
+            choices: ["4 and 5 — both have eccentricity 3, the smallest in the network", "1 and 8 — the two endpoints", "Only node 5", "Every node ties for the center"],
+            correct: 0,
+            a: "Nodes 4 and 5 both have eccentricity 3, tied for smallest; nodes 1 and 8 have the largest eccentricity (5) and are the farthest apart — they set the diameter.",
+          },
+          {
+            type: "think",
+            think: true,
+            q: "Now make the links 4→5 and 5→6 directed (all others stay undirected). Recompute the distances from node 1 and from node 6. Which pairs became unreachable?",
+            a: "From node 1: nothing changes — 1 still reaches everyone with the same distances as before (2=1, 3=1, 4=2, 5=3, 6=4, 7=4, 8=5), because every one of those routes already travelled 4→5 and 5→6 in the 'forward' direction that's still allowed.\n\nFrom node 6: node 6's only edge was 5-6, now directed 5→6 — meaning 6 has no outgoing edge at all anymore. Node 6 cannot reach anyone: it's a complete dead end.\n\nMore generally, the bridge 4-5 becoming one-way (4→5 only) means the whole {5,6,7,8} side can no longer reach back into {1,2,3,4} at all — every pair (s,t) with s∈{5,6,7,8} and t∈{1,2,3,4} is now unreachable, even though the reverse direction (from {1,2,3,4} into {5,6,7,8}) still works fine.",
+          },
+          {
+            type: "think",
+            think: true,
+            q: "Count the shortest paths from 1 to 5 in the network 1-2, 1-3, 2-4, 3-4, 4-5, 5-6, 5-7, 7-8. (There are two.)",
+            a: "1 to 4 has two shortest paths of length 2: 1-2-4 and 1-3-4 (the diamond has no diagonal edges, so both routes around it tie). Extending either one by the single edge 4-5 gives two shortest paths of length 3 from 1 to 5: 1-2-4-5 and 1-3-4-5.",
+          },
+          {
+            type: "think",
+            think: true,
+            q: "Compute the closeness of nodes D, F, and J in the Krackhardt kite (10 nodes: Andre, Beverly, Carol, Diane, Ed, Fernando, Garth, Heather, Ike, Jane; 18 links, with Diane the highest-degree node and Ike-Jane a small tail hanging off Heather-Garth-Fernando). Explain in one sentence why F beats D even though D has more links.",
+            a: "Kite edges: A-B, A-C, A-D, A-F, B-D, B-E, B-G, C-D, C-F, D-E, D-F, D-G, E-G, F-G, F-H, G-H, H-I, I-J.\n\nDistances from D: A,B,C,E,F,G all at distance 1 (6 nodes); H at distance 2; I at distance 3; J at distance 4. Sum = 6×1+2+3+4 = 15. Closeness_D = 9/15 = 0.6.\n\nDistances from F: A,C,D,G,H at distance 1 (5 nodes); B,E,I at distance 2; J at distance 3. Sum = 5×1+3×2+3 = 14. Closeness_F = 9/14 ≈ 0.643.\n\nDistances from J: I at 1, H at 2, F&G at 3, A,B,C,D,E at 4. Sum = 1+2+3+3+4×5 = 29. Closeness_J = 9/29 ≈ 0.310.\n\nWhy F beats D: D has more direct connections but sits deep inside the dense cluster, while F sits right at the narrow bridge to the H-I-J tail — so F's average distance to everyone, tail included, ends up shorter than D's despite D's higher degree.",
+          },
+          {
+            type: "think",
+            think: true,
+            q: "Compute the betweenness of H in the Krackhardt kite. Hint: H sits on every shortest path between {I, J} and the other seven nodes, and on no others. How many such pairs are there? Now do I, and explain why I has substantial betweenness with only two links.",
+            a: "H's exclusive pairs: {I,J} × {A,B,C,D,E,F,G} = 2×7 = 14 pairs, and H is the sole route for every one of them → raw betweenness(H) = 14 (normalized: 14/36 ≈ 0.389, dividing by (n-1)(n-2)/2=36).\n\nI's exclusive pairs: {J} × {A,B,C,D,E,F,G,H} = 8 pairs, since J's only connection to the rest of the network runs through I → raw betweenness(I) = 8 (normalized ≈0.222).\n\nWhy I matters despite only 2 links: I isn't well-connected, but it's the SOLE bridge for J to reach anyone else — a classic low-degree, high-betweenness broker. Betweenness rewards being an irreplaceable bridge, not having many connections.",
+          },
+          {
+            type: "think",
+            think: true,
+            q: "Compute the betweenness of C in the Krackhardt kite. (It should be zero. Why?)",
+            a: "Carol (C) connects to A, D, and F. But A-D, D-F, and A-F are ALL directly connected to each other and to the rest of the dense cluster through multiple other routes — so no shortest path between any pair of C's neighbors (or between any pair elsewhere in the network) ever needs to detour through C. Every pair C could conceivably 'bridge' already has a more direct route that bypasses her entirely, giving betweenness exactly 0 despite having 3 real connections.",
+          },
+          {
+            think: true,
+            q: "In the Krackhardt kite, why is Carol's (C's) betweenness exactly zero despite having 3 connections?",
+            choices: ["All of her neighbors are already directly connected to each other and to the rest of the network through other routes, so no shortest path ever needs to pass through her", "Betweenness is always zero for nodes with an odd degree", "She has the lowest degree in the network", "Betweenness can't be computed for degree-3 nodes"],
+            correct: 0,
+            a: "C's neighbors (A, D, F) are richly interconnected elsewhere, so every shortest path that could theoretically pass through C has a shorter or equally short alternative that doesn't.",
+          },
+          {
+            type: "think",
+            think: true,
+            q: "In the network from 1-2, 1-3, 2-4, 3-4, 4-5, 5-6, 5-7, 7-8, which node has the highest betweenness? Compute it, using your count of shortest paths.",
+            a: "Node 4 is a cut vertex separating {1,2,3} (3 nodes) from {5,6,7,8} (4 nodes): all 3×4=12 cross-pairs pass through it, plus it shares credit on the pair (2,3) — which has two shortest paths, 2-1-3 and 2-4-3 — for +0.5. Raw betweenness(4) = 12.5.\n\nNode 5 is a cut vertex separating {1,2,3,4} (4 nodes) from {6,7,8} (3 nodes): all 4×3=12 cross-pairs pass through it, PLUS it's the sole route for the within-{6,7,8} pairs (6,7) and (6,8) — both fully credited to node 5, adding +2. Raw betweenness(5) = 14.\n\nSo node 5 has the highest betweenness (14 > 12.5), even though node 4 looks more 'central' — 5's branching into three separate downstream nodes (6, 7, 8) creates more exclusive sole-bridge pairs than 4's position does.",
+          },
+          {
+            think: true,
+            q: "In the network 1-2, 1-3, 2-4, 3-4, 4-5, 5-6, 5-7, 7-8, which single node has the highest betweenness centrality?",
+            choices: ["Node 5 — raw betweenness 14, beating node 4's 12.5", "Node 4 — it has the most connections to the diamond", "Node 1 — it's the starting point", "Node 8 — it's the farthest node"],
+            correct: 0,
+            a: "Both 4 and 5 are cut vertices, but 5's branch into three separate downstream nodes (6, 7, 8) gives it extra exclusive-bridge pairs that push its betweenness (14) above node 4's (12.5).",
+          },
+          {
+            type: "think",
+            think: true,
+            q: "Come up with a network where betweenness centrality and closeness centrality have really different behaviors.",
+            a: "Two dense 5-node cliques connected by a single bridge edge (and its two endpoint nodes). Those two bridge nodes have enormous betweenness — literally every shortest path between the two cliques must pass through them — but only moderate closeness, since they're still 2+ steps from most nodes in the far clique. Meanwhile, a node embedded deep in the center of one clique has excellent closeness within its own clique but zero betweenness, since it never sits on anyone's only route to anywhere.",
+          },
+          {
+            type: "think",
+            think: true,
+            q: "For each of these questions, say which centrality measure you would use and why: whom to vaccinate first · whose retirement would hurt the company most · who has the most friends · which airport's closure delays the most journeys.",
+            a: "Using the page's own framing — degree for popularity, closeness for reach, betweenness for control, PageRank/eigenvector for prestige:\n\n'Who has the most friends' is degree centrality by definition — pure connection count.\n\n'Whom to vaccinate first' fits closeness — the person who can reach (and so infect) the rest of the network fastest is exactly who slows the epidemic's overall reach most if removed first.\n\n'Which airport's closure delays the most journeys' is the classic betweenness question — a hub that many routes' shortest paths pass through, whether or not it has the highest traffic itself.\n\n'Whose retirement hurts the company most' fits eigenvector/PageRank-style prestige — someone deeply embedded among other important, well-connected people (a trusted advisor to the top brass) can matter enormously without being a structural bridge (betweenness) or simply popular (degree).",
+          },
+          {
+            type: "think",
+            think: true,
+            q: "Take the four-node directed network A→B, A→C, B→C, C→A, D→C. Start with PR=0.25 for every node and α=0.85. Apply the PageRank equation once, to all four nodes, and write down the new vector. (D has no incoming links; what does it get, and from where?) Apply it a second time. Which node is winning, and why does A score well with a single incoming link?",
+            a: "Out-degrees: A→{B,C} (2), B→{C} (1), C→{A} (1), D→{C} (1). Teleport floor: (1−0.85)/4 = 0.0375.\n\nIteration 1 (all start at 0.25):\nPR_A = 0.0375 + 0.85×(PR_C/1) = 0.0375 + 0.2125 = 0.25\nPR_B = 0.0375 + 0.85×(PR_A/2) = 0.0375 + 0.10625 = 0.14375\nPR_C = 0.0375 + 0.85×(PR_A/2 + PR_B/1 + PR_D/1) = 0.0375 + 0.85×0.625 = 0.56875\nPR_D = 0.0375 + 0 = 0.0375 (no incoming links — it only ever gets the teleport floor)\n\nIteration 2 (using the values above):\nPR_A = 0.0375 + 0.85×0.56875 ≈ 0.521\nPR_B = 0.0375 + 0.85×(0.25/2) = 0.14375\nPR_C = 0.0375 + 0.85×(0.125 + 0.14375 + 0.0375) ≈ 0.298\nPR_D = 0.0375 (always)\n\nAfter two iterations, A is winning (≈0.521). A scores well from just one incoming link because that link comes from C, which itself accumulates a large score (from A, B, and D) — and since C's out-degree is only 1, C hands its ENTIRE score to A in one concentrated dose rather than splitting it. Quality (a link from a high-scoring, non-splitting node) beats quantity of incoming links.",
+          },
+          {
+            type: "think",
+            think: true,
+            q: "Set α=1 (no teleporting) in that same network. What happens to D's score, and after that to the whole thing? Say in one sentence what teleportation is for.",
+            a: "D's score collapses to exactly 0 — the teleport floor was its ONLY source of score (it has no incoming links at all), and removing teleportation removes that floor entirely.\n\nMore generally, without teleportation, any node or group with no incoming links starves to exactly zero, and any cycle the walker enters with no escape can trap it forever, leaving the rest of the network undervalued or the iteration without a well-defined unique answer.\n\nTeleportation exists to guarantee every node keeps some positive score and the whole system converges to one well-defined stationary distribution, however oddly the real link structure is shaped.",
+          },
+          {
+            type: "think",
+            think: true,
+            q: "Explain the difference between eigenvector centrality and PageRank in terms of what one node's link is worth when that node has many out-links. Then: in an undirected network, what does the random walker's stationary distribution reduce to?",
+            a: "In plain eigenvector centrality (using the raw adjacency matrix), a node hands its FULL score to every one of its out-links — having many out-links doesn't dilute what each individual link is worth. In PageRank (using the row-normalized walk matrix), a node splits its score EVENLY across all of its out-links, so a link from a node with many out-links is worth less than a link from a node with few — the same total score, thinly spread.\n\nOn an undirected network, the stationary distribution reduces to π_i = k_i/2m — plain degree centrality, up to the normalizing constant. Undirected PageRank is, quite literally, degree wearing a hat.",
+          },
+          {
+            think: true,
+            q: "In an undirected network, what does the random walker's stationary distribution reduce to?",
+            choices: ["π_i = k_i / 2m — exactly proportional to degree", "It's identical to betweenness centrality", "It's always uniform (1/n for every node)", "It's undefined for undirected networks"],
+            correct: 0,
+            a: "The vote-splitting that makes PageRank interesting on directed networks collapses on undirected ones — the stationary probability at a node is just its share of total degree.",
+          },
+          {
+            type: "think",
+            think: true,
+            q: "Before computing anything: a node has degree 2 and the highest betweenness in its network. Draw a network where this happens. Then draw one where the highest-degree node has betweenness zero.",
+            a: "Degree-2, highest betweenness: two large groups connected by a single node with exactly one edge into each group (an hourglass/bowtie shape). That connector has only degree 2, but every shortest path between the two groups must pass through it — giving it far higher betweenness than any node inside either group.\n\nHighest degree, zero betweenness: a complete graph (clique) — or simply a hub whose every neighbor is also directly connected to every other neighbor. Since any two of the hub's neighbors already have a direct edge, no shortest path between them ever needs to detour through the hub, so its betweenness is exactly 0 no matter how high its degree is.",
+          },
+          {
+            type: "think",
+            think: true,
+            q: "Explain why closeness is so much harder to be surprising at than betweenness, under a degree-preserving shuffle. (Think about what the shuffle preserves and what closeness depends on.)",
+            a: "Betweenness depends on the SPECIFIC wiring pattern — who exactly connects to whom — which a degree-preserving shuffle scrambles completely while holding degrees fixed. If a node's high betweenness came from being a specific, irreplaceable bridge, shuffling can easily destroy that specific position, making the real value stand out sharply from the shuffled distribution.\n\nCloseness is an aggregate (average distance to everyone), and that aggregate is much more strongly constrained by the degree sequence and overall small-world structure itself — in a heavy-tailed, well-connected network, almost any reasonably-connected node ends up close to everyone via SOME hub or other, almost regardless of the exact wiring. That leaves little room for one specific node's closeness to look dramatically different from what the shuffle also produces.",
+          },
+          {
+            type: "think",
+            think: true,
+            q: "Write three sentences for a report that state Hercules's betweenness correctly: the value, the comparison, and what it does and does not mean.",
+            a: "Model paragraph: 'Hercules has degree 26 and betweenness 0.037 in the Marvel network. Against 200 degree-preserving shuffles of the same network, the shuffled mean is 0.018 — his real value sits roughly four standard deviations above that. This shows Hercules's importance as a broker linking several corners of the Marvel universe is not simply a byproduct of his degree; it reflects a genuinely unusual bridging position beyond what his connection count alone would predict.'",
+          },
+          {
+            type: "think",
+            think: true,
+            q: "On paper: what is r (degree assortativity) for a star (one hub, every other node linked only to it)? Draw a six-node network with r>0 and one with r<0, and sketch k_nn(k) for each. Is a ring assortative, disassortative, or neither?",
+            a: "A star has r = −1: every single edge connects the one high-degree hub to a degree-1 leaf, the most extreme possible mismatch — maximally disassortative.\n\nr>0 example: two triangles joined by one edge between their two highest-degree members — same-degree nodes tend to link to same-degree nodes. k_nn(k) rises with k.\n\nr<0 example: a star — the hub (highest k) connects only to leaves (lowest k), and every leaf connects only to the hub (highest k). k_nn(k) falls sharply as k rises.\n\nA ring (every node degree exactly 2): neither — with zero degree variance, there's nothing to correlate, so assortativity is undefined/meaningless for a perfectly regular network.",
+          },
+          {
+            think: true,
+            q: "What is the degree assortativity r of a star network (one hub, every other node linked only to it)?",
+            choices: ["r = −1 (maximally disassortative)", "r = 0", "r = +1", "r is undefined for stars"],
+            correct: 0,
+            a: "Every edge pairs the same maximal-degree hub with a minimal-degree leaf — the most extreme possible disassortative mismatch, r = −1.",
+          },
+          {
+            think: true,
+            q: "Is a ring (every node with degree exactly 2) assortative or disassortative?",
+            choices: ["Neither — with zero degree variance, assortativity is undefined/meaningless", "Strongly assortative", "Strongly disassortative", "It's always exactly r=0.5"],
+            correct: 0,
+            a: "Assortativity measures correlation between degrees at either end of an edge — with every node sharing the exact same degree, there's no variation left to correlate.",
+          },
+          {
+            type: "think",
+            think: true,
+            q: "In exercise 3.2's network (nodes 1-8, links 1-2, 1-3, 2-4, 3-4, 4-5, 5-6, 5-7, 7-8), list every maximal clique. What is the clique number?",
+            diagram: { graph: "week3chain" },
+            a: "This network is entirely triangle-free — the 'diamond' 1-2-4-3-1 has no diagonal edges (no 1-4 or 2-3 link), so it's just a 4-cycle, not a clique. No triangle exists anywhere else either (check every node's neighbors: none are mutually linked).\n\nSo every maximal clique here is just a single edge: {1,2}, {1,3}, {2,4}, {3,4}, {4,5}, {5,6}, {5,7}, {7,8} — eight maximal 2-cliques. The clique number is 2.",
+          },
+          {
+            type: "think",
+            think: true,
+            q: "A 6-clique has how many links? What is the smallest degree a node in it can have? Use that to say, without computing anything, which Marvel characters cannot be in the 8-clique.",
+            a: "A 6-clique has k(k−1)/2 = 6×5/2 = 15 links. Every member connects to all 5 others within the clique, so the smallest degree any member can have is 5 (possibly more, from links outside the clique).\n\nFor the actual 8-clique, membership requires being connected to all 7 other members — a minimum degree of 7 just from clique membership alone. So any Marvel character with degree below 7 is automatically excluded from the 8-clique — no need to check their specific connections at all.",
+          },
+          {
+            think: true,
+            q: "A 6-clique has how many links?",
+            choices: ["15 (=6×5/2)", "6", "12", "30"],
+            correct: 0,
+            a: "Every pair among 6 members is linked: 6×5/2 = 15.",
+          },
+          {
+            think: true,
+            q: "What's the minimum degree any node inside an 8-clique must have (just from clique membership alone)?",
+            choices: ["7 — connected to all 7 other members", "8", "4", "1"],
+            correct: 0,
+            a: "Clique membership requires a direct link to every other member — 7 others, so at least degree 7.",
+          },
+          {
+            type: "think",
+            think: true,
+            q: "Explain why a network with clustering coefficient C=1 is a set of disconnected cliques, and why C=0 means it has no 3-clique (triangle) at all.",
+            a: "C=1 for every node means every node's neighborhood is a complete clique — all of its neighbors are mutually connected. If a node had even one edge reaching outside its own tightly-knit group, its neighborhood would include members from two different groups who aren't connected to each other, breaking C_i=1 for that node. So a network where every node has C_i=1 is forced to break into separate, fully-connected components with no edges between them.\n\nC=0 (network-wide) means no node has even one linked pair of neighbors anywhere — since C_i measures exactly the fraction of a node's neighbor-pairs that are linked, a global value of exactly 0 means there is no set of three mutually-connected nodes anywhere in the network at all.",
+          },
+          {
+            think: true,
+            q: "Why does C=1 for every node in a network force it to be a disjoint union of complete cliques?",
+            choices: ["If any node had a neighbor outside its own fully-connected group, that neighbor-pair wouldn't be linked, breaking C_i=1 for that node", "C=1 is just a coincidence with no structural implication", "C=1 always means the network has exactly one node", "It doesn't — C=1 networks can have any structure"],
+            correct: 0,
+            a: "Any cross-group edge would introduce a neighbor pair from different groups that isn't linked, which would drag that node's C_i below 1 — so C=1 everywhere forces total separation into cliques.",
+          },
+        ],
+      },
       4: null,
       5: null,
       6: null,
@@ -1570,20 +1790,48 @@ const WEEK1_EDGES = [
   ["E", "F"],
 ];
 
-function buildNetworkDiagram({ directed = false, triangles = [], cutNode = null } = {}) {
+const WEEK3_CHAIN_NODE_POS = {
+  1: [30, 70],
+  2: [90, 35],
+  3: [90, 105],
+  4: [150, 70],
+  5: [210, 70],
+  6: [270, 35],
+  7: [270, 105],
+  8: [330, 105],
+};
+
+const WEEK3_CHAIN_EDGES = [
+  ["1", "2"],
+  ["1", "3"],
+  ["2", "4"],
+  ["3", "4"],
+  ["4", "5"],
+  ["5", "6"],
+  ["5", "7"],
+  ["7", "8"],
+];
+
+const GRAPH_LAYOUTS = {
+  week1: { nodePos: WEEK1_NODE_POS, edges: WEEK1_EDGES, viewBox: "0 0 320 140" },
+  week3chain: { nodePos: WEEK3_CHAIN_NODE_POS, edges: WEEK3_CHAIN_EDGES, viewBox: "0 0 360 140" },
+};
+
+function buildNetworkDiagram({ directed = false, triangles = [], cutNode = null, graph = "week1" } = {}) {
   const R = 15;
+  const { nodePos, edges, viewBox } = GRAPH_LAYOUTS[graph];
   const triangleColors = ["rgba(204,31,122,0.22)", "rgba(109,127,224,0.24)"];
 
   const triangleMarkup = triangles
     .map((tri, i) => {
-      const pts = tri.map((n) => WEEK1_NODE_POS[n].join(",")).join(" ");
+      const pts = tri.map((n) => nodePos[n].join(",")).join(" ");
       return '<polygon points="' + pts + '" fill="' + triangleColors[i % triangleColors.length] + '" />';
     })
     .join("");
 
-  const edgeMarkup = WEEK1_EDGES.map(([from, to]) => {
-    const [x1, y1] = WEEK1_NODE_POS[from];
-    let [x2, y2] = WEEK1_NODE_POS[to];
+  const edgeMarkup = edges.map(([from, to]) => {
+    const [x1, y1] = nodePos[from];
+    let [x2, y2] = nodePos[to];
     let markerAttr = "";
     if (directed) {
       const dx = x2 - x1;
@@ -1600,7 +1848,7 @@ function buildNetworkDiagram({ directed = false, triangles = [], cutNode = null 
     );
   }).join("");
 
-  const nodeMarkup = Object.entries(WEEK1_NODE_POS)
+  const nodeMarkup = Object.entries(nodePos)
     .map(([label, [x, y]]) => {
       const isCut = label === cutNode;
       const fill = isCut ? "#cc1f7a" : "#6d7fe0";
@@ -1624,11 +1872,11 @@ function buildNetworkDiagram({ directed = false, triangles = [], cutNode = null 
     : "";
 
   const label = directed
-    ? "Directed diagram of the six-node network, arrows show direction"
-    : "Diagram of the six-node network";
+    ? "Directed diagram of the network, arrows show direction"
+    : "Diagram of the network";
 
   return (
-    '<svg viewBox="0 0 320 140" role="img" aria-label="' + label + '">' +
+    '<svg viewBox="' + viewBox + '" role="img" aria-label="' + label + '">' +
     defs +
     triangleMarkup +
     edgeMarkup +

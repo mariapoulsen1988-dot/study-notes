@@ -203,6 +203,51 @@ const COURSES = {
             correct: 0,
             a: "In weighted networks, node strength sums the weights of all incident edges — distinct from plain degree, which just counts edges regardless of weight. (Ch. 9)",
           },
+          {
+            type: "think",
+            q: "List three real networks. For each one: what are the nodes, what are the edges, is it directed or undirected, and is it weighted or unweighted?",
+            a: "Three examples (yours can differ — same structure):\n\n1) The World Wide Web\n• Nodes: web pages. Edges: hyperlinks from one page to another.\n• Directed (a link on page A to page B doesn't mean B links back) and unweighted (a link either exists or it doesn't).\n• Weight-forcing question: 'how many times does A link to B, or how much traffic flows along that link?' — turns the 0/1 edge into a count.\n\n2) An airline route map\n• Nodes: airports. Edges: a direct flight route between two airports.\n• Undirected if you only care whether a route exists; unweighted by default.\n• Weight-forcing question: 'how many passengers or flights per week move along this route?'\n\n3) A phone-call log\n• Nodes: people (phone numbers). Edges: a call was made between two people.\n• Directed (caller → receiver) and unweighted if you just record 'did a call happen.'\n• Weight-forcing question: 'how many minutes did they talk, or how many calls did they exchange?'\n\nPattern: weights get forced the moment you ask 'how much / how many' instead of just 'does a connection exist.'",
+          },
+          {
+            type: "think",
+            q: "Pick a network you personally care about (a fourth one, different from the three above). Answer for it:\n• What are its nodes and edges?\n• Roughly how large is it?\n• Can it actually be mapped — is the data available?\n• Does it change over time?\n• Is something flowing or spreading on it?\n• Why do you care about it?",
+            a: "This one's yours to fill in — here's a worked example showing the shape of a good answer (swap in your own network):\n\nExample: 'My study group's shared flashcard habit'\n• Nodes: the people in the group. Edges: 'sent this person a flashcard set' or 'reviewed the same deck the same week.'\n• Size: small — maybe 5–10 people, so a few dozen edges at most.\n• Mappable? Partly — I have my own usage data (this app!), but not everyone's, so only my slice of the network is actually available to me.\n• Changes over time: yes — who's active shifts week to week as an exam gets closer.\n• What flows: motivation to keep up, and explanations/knowledge (a good explanation from one person spreads to the others).\n• Why I care: it's the actual support system getting me through this course, and thinking of it as a network explains why some weeks everyone falls behind together — whoever the group's most-connected person is matters a lot.\n\nNow do the same for something real to you — a sports team, a group chat, a hobby community, a gym class, a fandom — anything with real nodes and real ties.",
+          },
+          {
+            type: "think",
+            q: "Describe one system that can be cast as a network in two genuinely different ways — a different choice of what counts as a node, not just different data. For each representation, name a question it can answer that the other representation structurally cannot.",
+            a: "Example from lecture: academic literature.\n\nRepresentation 1 — papers citing papers\n• Nodes: individual papers. Edges: 'paper A cites paper B' (directed).\n• Can answer: what is the exact citation lineage of this one result — which specific paper did this idea come from?\n\nRepresentation 2 — authors co-authoring\n• Nodes: individual authors. Edges: 'author X and author Y wrote a paper together' (undirected, can be weighted by number of shared papers).\n• Can answer: which researchers cluster into the same collaboration community, and who bridges two different labs?\n\nNeither view is 'more correct.' The paper-citation network can't tell you about research collaborations (an author isn't a node there), and the co-authorship network can't tell you which specific idea led to which other idea (a paper isn't a node there). The choice of node decides which questions are even askable.",
+          },
+          {
+            type: "think",
+            q: "Take the edge list: A–B, A–C, A–D, B–C, C–D, D–E, E–F.\nDraw the network, then write down every node's degree.",
+            a: "Drawing it: A, B, C, D form a tight cluster (A connects to all of B, C, D; B–C and C–D are also connected), and D is the doorway to a short tail D–E–F hanging off the cluster.\n\nDegrees (count each node's edges):\n• A: B, C, D → degree 3\n• B: A, C → degree 2\n• C: A, B, D → degree 3\n• D: A, C, E → degree 3\n• E: D, F → degree 2\n• F: E → degree 1",
+          },
+          {
+            type: "think",
+            q: "For that same edge list (A–B, A–C, A–D, B–C, C–D, D–E, E–F): how many edges does the network have, and what does the sum of the degrees you just wrote down have to do with that number? Compute the average degree and the density.",
+            a: "Edges: m = 7 (count the list — that's all there is).\n\nSum of degrees: 3+2+3+3+2+1 = 14 = 2m. Every edge has two ends, so it gets counted once for each endpoint — the sum of degrees is always exactly twice the edge count, not just loosely related to it.\n\nAverage degree: ⟨k⟩ = 2m/n = 14/6 ≈ 2.33.\n\nDensity: 2m / [n(n−1)] = 14 / (6·5) = 14/30 ≈ 0.47 — about 47% of all possible pairs among these 6 nodes are actually linked.",
+          },
+          {
+            type: "think",
+            q: "Write the network's adjacency matrix, rows and columns ordered A–F. Name two properties this matrix must have simply because the network is undirected and simple — say which is which. Then check that every row sum reproduces the degree you found earlier.",
+            a: "Matrix (1 = edge, 0 = none), order A,B,C,D,E,F:\nA: 0 1 1 1 0 0\nB: 1 0 1 0 0 0\nC: 1 1 0 1 0 0\nD: 1 0 1 0 1 0\nE: 0 0 0 1 0 1\nF: 0 0 0 0 1 0\n\nUndirected ⇒ symmetric (a_ij = a_ji — e.g. A–D and D–A are both 1).\nSimple (no self-loops) ⇒ zero diagonal (every a_ii = 0).\n\nRow sums: A=3, B=2, C=3, D=3, E=2, F=1 — exactly the degrees from before. ✓",
+          },
+          {
+            type: "think",
+            q: "Find every triangle in the network. Which single node would you remove to disconnect the network, and what does that suggest 'importance' might mean here?",
+            a: "Triangles: {A,B,C} (A–B, A–C, B–C all present) and {A,C,D} (A–C, A–D, C–D all present) — just those two, sharing the edge A–C.\n\nRemoving D splits the network into {A,B,C} and {E,F} — the biggest single-node break. (Removing E also disconnects it, but only strands F alone — a smaller break.)\n\nSo 'importance' here isn't about having the most edges — A and C both have degree 3, same as D. It's about sitting on the only path between two otherwise-separate parts of the network, like a bridge or gatekeeper. That's a preview of betweenness centrality, which Week 3 defines properly.",
+          },
+          {
+            type: "think",
+            q: "Now make the edges directed: A→B, A→C, A→D, B→C, C→D, D→E, E→F. Write each node's in-degree and out-degree, and write the adjacency matrix again — which of the row sums and column sums gives which degree now? What real relationship (following? citing? emailing?) would make this exact direction pattern meaningful?",
+            a: "In-degree / out-degree:\n• A: in 0, out 3 (→B,C,D)\n• B: in 1, out 1 (→C)\n• C: in 2, out 1 (→D)\n• D: in 2, out 1 (→E)\n• E: in 1, out 1 (→F)\n• F: in 1, out 0\n\nAdjacency matrix (row = source, column = target), order A–F:\nA: 0 1 1 1 0 0\nB: 0 0 1 0 0 0\nC: 0 0 0 1 0 0\nD: 0 0 0 0 1 0\nE: 0 0 0 0 0 1\nF: 0 0 0 0 0 0\n\nRow sums give out-degree (A's row sums to 3, matching out-degree 3). Column sums give in-degree (C's column has two 1s — from A and B — matching in-degree 2).\n\nA relationship this pattern fits: a citation network, where A is a foundational early paper that B, C, and D all cite directly, while C→D→E→F traces a chain of each paper building on the one just before it — an old idea (A) fanning out, then a lineage of follow-up work running forward in time.",
+          },
+          {
+            type: "think",
+            q: "Sketch the (undirected) network's degree distribution as a bar chart: k on the x-axis, number of nodes on the y-axis. Then write the distances d(A,F) and d(B,E).",
+            a: "Degrees were A=3, B=2, C=3, D=3, E=2, F=1, so the bar chart has three bars:\n• k=1 → 1 node (F)\n• k=2 → 2 nodes (B, E)\n• k=3 → 3 nodes (A, C, D)\n(No bars at k=0 or k≥4 — nobody has those degrees.)\n\nDistances (shortest path length, undirected network):\n• d(A,F): A–D–E–F → 3 steps. Nothing shorter exists since F only touches E, and E only touches D and F.\n• d(B,E): B–A–D–E or B–C–D–E → 3 steps either way — B has no route to D's side in 2 steps.",
+          },
         ],
       },
       2: {
@@ -613,13 +658,15 @@ function renderContent() {
     mainWrap.innerHTML = "";
     const card = week.flashcards[activeCardIndex];
     const cardIndexAtRender = activeCardIndex;
-    mainWrap.appendChild(
-      buildQuizCard(card, (isCorrect) => {
-        cardStatus[cardIndexAtRender] = isCorrect ? "correct" : "wrong";
-        saveState();
-        renderStrip();
-      })
-    );
+    const builtCard =
+      card.type === "think"
+        ? buildThinkCard(card)
+        : buildQuizCard(card, (isCorrect) => {
+            cardStatus[cardIndexAtRender] = isCorrect ? "correct" : "wrong";
+            saveState();
+            renderStrip();
+          });
+    mainWrap.appendChild(builtCard);
     cardPrevBtn.disabled = activeCardIndex <= 0;
     cardNextBtn.disabled = activeCardIndex >= week.flashcards.length - 1;
   }
@@ -784,6 +831,19 @@ function shuffledOptions(card) {
   return options;
 }
 
+function createFlipButton(cardEl) {
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "flip-toggle-btn";
+  btn.textContent = "⇄ Flip card";
+  btn.setAttribute("aria-label", "Flip card to see the other side");
+  btn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    cardEl.classList.toggle("flipped");
+  });
+  return btn;
+}
+
 function buildQuizCard(cardData, onFirstAttempt) {
   const card = document.createElement("div");
   card.className = "flashcard flashcard-main";
@@ -793,6 +853,8 @@ function buildQuizCard(cardData, onFirstAttempt) {
 
   const front = document.createElement("div");
   front.className = "flashcard-face flashcard-front flashcard-quiz-front";
+
+  front.appendChild(createFlipButton(card));
 
   const question = document.createElement("p");
   question.className = "flashcard-question";
@@ -830,11 +892,17 @@ function buildQuizCard(cardData, onFirstAttempt) {
   const back = document.createElement("div");
   back.className = "flashcard-face flashcard-back";
 
+  const backQuestion = document.createElement("p");
+  backQuestion.className = "flashcard-back-question";
+  backQuestion.textContent = cardData.q;
+
   const resultLine = document.createElement("p");
   resultLine.className = "flashcard-result";
   const explanation = document.createElement("p");
   explanation.className = "flashcard-explanation";
   explanation.textContent = cardData.a;
+  back.appendChild(createFlipButton(card));
+  back.appendChild(backQuestion);
   back.appendChild(resultLine);
   back.appendChild(explanation);
 
@@ -896,6 +964,65 @@ function buildQuizCard(cardData, onFirstAttempt) {
   back.addEventListener("click", () => {
     reset();
   });
+
+  inner.appendChild(front);
+  inner.appendChild(back);
+  card.appendChild(inner);
+
+  return card;
+}
+
+function buildThinkCard(cardData) {
+  const card = document.createElement("div");
+  card.className = "flashcard flashcard-main flashcard-think";
+
+  const inner = document.createElement("div");
+  inner.className = "flashcard-inner";
+
+  function makeThinkBadge() {
+    const badge = document.createElement("span");
+    badge.className = "think-badge";
+    badge.textContent = "Think";
+    return badge;
+  }
+
+  const front = document.createElement("div");
+  front.className = "flashcard-face flashcard-front flashcard-quiz-front flashcard-think-front";
+
+  const frontTopRow = document.createElement("div");
+  frontTopRow.className = "flashcard-top-row";
+  frontTopRow.appendChild(makeThinkBadge());
+  frontTopRow.appendChild(createFlipButton(card));
+  front.appendChild(frontTopRow);
+
+  const question = document.createElement("p");
+  question.className = "flashcard-question";
+  question.textContent = cardData.q;
+  front.appendChild(question);
+
+  const hint = document.createElement("p");
+  hint.className = "flashcard-think-hint";
+  hint.textContent = "Work it out, then flip for a model answer.";
+  front.appendChild(hint);
+
+  const back = document.createElement("div");
+  back.className = "flashcard-face flashcard-back flashcard-think-back";
+
+  const backTopRow = document.createElement("div");
+  backTopRow.className = "flashcard-top-row";
+  backTopRow.appendChild(makeThinkBadge());
+  backTopRow.appendChild(createFlipButton(card));
+  back.appendChild(backTopRow);
+
+  const backQuestion = document.createElement("p");
+  backQuestion.className = "flashcard-back-question";
+  backQuestion.textContent = cardData.q;
+  back.appendChild(backQuestion);
+
+  const explanation = document.createElement("p");
+  explanation.className = "flashcard-explanation flashcard-think-answer";
+  explanation.textContent = cardData.a;
+  back.appendChild(explanation);
 
   inner.appendChild(front);
   inner.appendChild(back);

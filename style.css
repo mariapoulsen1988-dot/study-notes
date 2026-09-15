@@ -257,6 +257,77 @@ h1 {
   color: var(--text);
 }
 
+.flip-toggle-btn {
+  align-self: center;
+  padding: 5px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  opacity: 0.75;
+  cursor: pointer;
+}
+
+.flip-toggle-btn:hover {
+  opacity: 1;
+  border-color: var(--accent2);
+}
+
+.flashcard-back-question {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.4;
+  opacity: 0.75;
+}
+
+.flashcard-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.think-badge {
+  display: inline-block;
+  padding: 3px 12px;
+  border-radius: 999px;
+  background: var(--accent2);
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.flashcard-think-front .flashcard-question,
+.flashcard-think-back .flashcard-back-question {
+  text-align: left;
+  white-space: pre-line;
+}
+
+.flashcard-think-front .flashcard-question {
+  font-size: 1.05rem;
+}
+
+.flashcard-think-hint {
+  margin: 0;
+  text-align: center;
+  font-size: 0.85rem;
+  font-style: italic;
+  opacity: 0.65;
+}
+
+.flashcard-think-answer {
+  white-space: pre-line;
+  text-align: left;
+  font-size: 0.95rem;
+}
+
 .reveal-choices-btn {
   align-self: center;
   padding: 10px 20px;

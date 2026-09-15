@@ -147,6 +147,95 @@ h1 {
   padding: 6px 12px;
 }
 
+.week-mix-btn {
+  border-color: var(--accent2);
+  color: var(--accent2);
+  font-weight: 600;
+}
+
+.week-mix-btn:hover {
+  border-color: var(--accent2);
+  background: var(--accent2-soft);
+}
+
+.week-mix-btn.active {
+  background: var(--accent2);
+  border-color: transparent;
+  color: #fff;
+}
+
+.mix-picker {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 4px 24px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mix-picker-title {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.mix-picker-checks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.mix-picker-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.mix-picker-check input {
+  accent-color: var(--accent2);
+  cursor: pointer;
+}
+
+.mix-picker-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.mix-picker-start,
+.mix-picker-cancel {
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.mix-picker-start {
+  border: none;
+  background: var(--accent-gradient);
+  color: #fff;
+  font-weight: 600;
+}
+
+.mix-picker-cancel {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+}
+
+.shuffle-btn,
+.reset-order-btn {
+  font-size: 1.25rem;
+}
+
 .content {
   max-width: 900px;
   margin: 24px auto 60px;
@@ -628,6 +717,10 @@ h1 {
   .course-tabs,
   .week-nav {
     padding: 0 16px;
+  }
+
+  .mix-picker {
+    padding: 4px 16px 0;
   }
 
   .week-nav.collapsed {

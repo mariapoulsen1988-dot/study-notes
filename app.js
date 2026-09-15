@@ -1397,9 +1397,41 @@ let activeWeek = 1;
 let activeCardIndex = 0;
 let weekNavCollapsed = false;
 let cardStatusByWeek = {};
+let orderByWeek = {};
+let mixSelectedWeeks = [];
+let mixPickerOpen = false;
 
 function weekStatusKey(course, week) {
   return course + ":" + week;
+}
+
+function weeksWithContent(course) {
+  const weeks = COURSES[course].weeks;
+  const list = [];
+  for (let w = 1; w <= NUM_WEEKS; w++) {
+    const wk = weeks[w];
+    if (wk && Array.isArray(wk.flashcards) && wk.flashcards.length) list.push(w);
+  }
+  return list;
+}
+
+function buildMixDeck(course, weekNumbers) {
+  const weeks = COURSES[course].weeks;
+  let combined = [];
+  weekNumbers.forEach((w) => {
+    const wk = weeks[w];
+    if (wk && Array.isArray(wk.flashcards)) combined = combined.concat(wk.flashcards);
+  });
+  return combined;
+}
+
+function shuffledIndexOrder(length) {
+  const order = Array.from({ length }, (_, i) => i);
+  for (let i = order.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [order[i], order[j]] = [order[j], order[i]];
+  }
+  return order;
 }
 
 function loadState() {
@@ -1409,10 +1441,17 @@ function loadState() {
     const state = JSON.parse(raw);
     if (state.course && COURSES[state.course]) activeCourse = state.course;
     if (typeof state.week === "number" && state.week >= 1 && state.week <= NUM_WEEKS) activeWeek = state.week;
+    else if (state.week === "mix") activeWeek = "mix";
     if (typeof state.cardIndex === "number" && state.cardIndex >= 0) activeCardIndex = state.cardIndex;
     if (typeof state.collapsed === "boolean") weekNavCollapsed = state.collapsed;
     if (state.cardStatusByWeek && typeof state.cardStatusByWeek === "object") {
       cardStatusByWeek = state.cardStatusByWeek;
+    }
+    if (state.orderByWeek && typeof state.orderByWeek === "object") {
+      orderByWeek = state.orderByWeek;
+    }
+    if (Array.isArray(state.mixSelectedWeeks)) {
+      mixSelectedWeeks = state.mixSelectedWeeks.filter((w) => typeof w === "number" && w >= 1 && w <= NUM_WEEKS);
     }
   } catch (e) {
     // localStorage unavailable or corrupt — just start fresh
@@ -1429,6 +1468,8 @@ function saveState() {
         cardIndex: activeCardIndex,
         collapsed: weekNavCollapsed,
         cardStatusByWeek: cardStatusByWeek,
+        orderByWeek: orderByWeek,
+        mixSelectedWeeks: mixSelectedWeeks,
       })
     );
   } catch (e) {
@@ -1462,7 +1503,8 @@ function updateWeekPill() {
 
   if (weekNavCollapsed) {
     weekPillBtn.hidden = false;
-    weekPillBtn.textContent = "Week " + activeWeek + " · change week ▾";
+    const label = activeWeek === "mix" ? "🔀 Mixed weeks" : "Week " + activeWeek;
+    weekPillBtn.textContent = label + " · change week ▾";
   } else {
     weekPillBtn.hidden = true;
   }
@@ -1506,10 +1548,27 @@ function renderCourseTabs() {
 }
 
 function renderWeekNav() {
-  weekNavEl.classList.toggle("collapsed", weekNavCollapsed);
+  weekNavEl.classList.toggle("collapsed", weekNavCollapsed && !mixPickerOpen);
   updateWeekPill();
 
   weekNavEl.innerHTML = "";
+
+  if (mixPickerOpen) {
+    renderMixPicker(weekNavEl);
+    return;
+  }
+
+  const mixBtn = document.createElement("button");
+  mixBtn.type = "button";
+  mixBtn.className = "week-btn week-mix-btn" + (activeWeek === "mix" ? " active" : "");
+  mixBtn.textContent = "🔀 Mix weeks";
+  mixBtn.addEventListener("click", () => {
+    mixPickerOpen = true;
+    weekNavCollapsed = false;
+    renderWeekNav();
+  });
+  weekNavEl.appendChild(mixBtn);
+
   for (let w = 1; w <= NUM_WEEKS; w++) {
     const btn = document.createElement("button");
     btn.className = "week-btn" + (w === activeWeek ? " active" : "");
@@ -1527,14 +1586,100 @@ function renderWeekNav() {
   }
 }
 
+function renderMixPicker(container) {
+  const available = weeksWithContent(activeCourse);
+
+  const wrap = document.createElement("div");
+  wrap.className = "mix-picker";
+
+  if (!available.length) {
+    const empty = document.createElement("p");
+    empty.className = "mix-picker-title";
+    empty.textContent = "No flashcards yet to mix.";
+    wrap.appendChild(empty);
+    container.appendChild(wrap);
+    return;
+  }
+
+  const title = document.createElement("p");
+  title.className = "mix-picker-title";
+  title.textContent = "Mix flashcards from which weeks?";
+  wrap.appendChild(title);
+
+  const checksWrap = document.createElement("div");
+  checksWrap.className = "mix-picker-checks";
+  const checkboxes = [];
+
+  available.forEach((w) => {
+    const label = document.createElement("label");
+    label.className = "mix-picker-check";
+
+    const cb = document.createElement("input");
+    cb.type = "checkbox";
+    cb.checked = mixSelectedWeeks.length ? mixSelectedWeeks.includes(w) : true;
+    checkboxes.push({ w, cb });
+
+    const span = document.createElement("span");
+    span.textContent = "Week " + w;
+
+    label.appendChild(cb);
+    label.appendChild(span);
+    checksWrap.appendChild(label);
+  });
+  wrap.appendChild(checksWrap);
+
+  const actions = document.createElement("div");
+  actions.className = "mix-picker-actions";
+
+  const startBtn = document.createElement("button");
+  startBtn.type = "button";
+  startBtn.className = "mix-picker-start";
+  startBtn.textContent = "🔀 Start random mix";
+  startBtn.addEventListener("click", () => {
+    const chosen = checkboxes.filter((c) => c.cb.checked).map((c) => c.w);
+    if (!chosen.length) return;
+    mixSelectedWeeks = chosen;
+    activeWeek = "mix";
+    activeCardIndex = 0;
+    mixPickerOpen = false;
+    weekNavCollapsed = true;
+    const key = weekStatusKey(activeCourse, "mix");
+    const deck = buildMixDeck(activeCourse, mixSelectedWeeks);
+    orderByWeek[key] = shuffledIndexOrder(deck.length);
+    delete cardStatusByWeek[key];
+    saveState();
+    renderWeekNav();
+    renderContent();
+  });
+
+  const cancelBtn = document.createElement("button");
+  cancelBtn.type = "button";
+  cancelBtn.className = "mix-picker-cancel";
+  cancelBtn.textContent = "Cancel";
+  cancelBtn.addEventListener("click", () => {
+    mixPickerOpen = false;
+    renderWeekNav();
+  });
+
+  actions.appendChild(startBtn);
+  actions.appendChild(cancelBtn);
+  wrap.appendChild(actions);
+
+  container.appendChild(wrap);
+}
+
 function renderContent() {
   contentEl.innerHTML = "";
-  const week = COURSES[activeCourse].weeks[activeWeek];
+  const week =
+    activeWeek === "mix"
+      ? { flashcards: buildMixDeck(activeCourse, mixSelectedWeeks) }
+      : COURSES[activeCourse].weeks[activeWeek];
 
-  if (!week || !week.flashcards) {
+  if (!week || !week.flashcards || !week.flashcards.length) {
     const empty = document.createElement("p");
     empty.className = "empty-week";
-    empty.textContent = "No content yet for Week " + activeWeek + ".";
+    empty.textContent =
+      activeWeek === "mix" ? "No flashcards yet to mix." : "No content yet for Week " + activeWeek + ".";
     contentEl.appendChild(empty);
     return;
   }
@@ -1579,34 +1724,41 @@ function renderContent() {
     cardStatusByWeek[statusKey] = new Array(week.flashcards.length).fill(null);
   }
   const cardStatus = cardStatusByWeek[statusKey];
+
+  if (!Array.isArray(orderByWeek[statusKey]) || orderByWeek[statusKey].length !== week.flashcards.length) {
+    orderByWeek[statusKey] = week.flashcards.map((_, i) => i);
+  }
+  let order = orderByWeek[statusKey];
+
   let stripHasCentered = false;
 
   function renderMain() {
     mainWrap.innerHTML = "";
-    const card = week.flashcards[activeCardIndex];
-    const cardIndexAtRender = activeCardIndex;
+    const canonicalIndex = order[activeCardIndex];
+    const card = week.flashcards[canonicalIndex];
     const builtCard =
       card.type === "think"
         ? buildThinkCard(card)
         : buildQuizCard(card, (isCorrect) => {
-            cardStatus[cardIndexAtRender] = isCorrect ? "correct" : "wrong";
+            cardStatus[canonicalIndex] = isCorrect ? "correct" : "wrong";
             saveState();
             renderStrip();
           });
     mainWrap.appendChild(builtCard);
     cardPrevBtn.disabled = activeCardIndex <= 0;
-    cardNextBtn.disabled = activeCardIndex >= week.flashcards.length - 1;
+    cardNextBtn.disabled = activeCardIndex >= order.length - 1;
   }
 
   function renderStrip() {
     strip.innerHTML = "";
-    week.flashcards.forEach((card, i) => {
+    order.forEach((canonicalIndex, i) => {
+      const card = week.flashcards[canonicalIndex];
       const mini = document.createElement("button");
       mini.className =
         "flashcard-mini" +
         (i === activeCardIndex ? " active" : "") +
-        (cardStatus[i] === "correct" ? " status-correct" : "") +
-        (cardStatus[i] === "wrong" ? " status-wrong" : "");
+        (cardStatus[canonicalIndex] === "correct" ? " status-correct" : "") +
+        (cardStatus[canonicalIndex] === "wrong" ? " status-wrong" : "");
       mini.setAttribute("aria-label", card.q);
 
       const num = document.createElement("span");
@@ -1637,8 +1789,40 @@ function renderContent() {
     }
   }
 
+  function reshuffleOrder() {
+    order = shuffledIndexOrder(week.flashcards.length);
+    orderByWeek[statusKey] = order;
+    activeCardIndex = 0;
+    saveState();
+    renderMain();
+    renderStrip();
+  }
+
+  function restoreOriginalOrder() {
+    order = week.flashcards.map((_, i) => i);
+    orderByWeek[statusKey] = order;
+    activeCardIndex = 0;
+    saveState();
+    renderMain();
+    renderStrip();
+  }
+
+  const shuffleBtn = document.createElement("button");
+  shuffleBtn.type = "button";
+  shuffleBtn.className = "strip-arrow shuffle-btn";
+  shuffleBtn.textContent = "🔀";
+  shuffleBtn.setAttribute("aria-label", "Shuffle card order");
+  shuffleBtn.addEventListener("click", reshuffleOrder);
+
+  const resetOrderBtn = document.createElement("button");
+  resetOrderBtn.type = "button";
+  resetOrderBtn.className = "strip-arrow reset-order-btn";
+  resetOrderBtn.textContent = "↺";
+  resetOrderBtn.setAttribute("aria-label", "Restore original order");
+  resetOrderBtn.addEventListener("click", restoreOriginalOrder);
+
   function goToCard(targetIndex) {
-    if (targetIndex < 0 || targetIndex >= week.flashcards.length || targetIndex === activeCardIndex) return;
+    if (targetIndex < 0 || targetIndex >= order.length || targetIndex === activeCardIndex) return;
     const goingNext = targetIndex > activeCardIndex;
     const width = mainWrap.offsetWidth || 300;
 
@@ -1716,7 +1900,7 @@ function renderContent() {
       if (swipeDecided && Math.abs(dx) > SWIPE_THRESHOLD) {
         const goingNext = dx < 0;
         const targetIndex = activeCardIndex + (goingNext ? 1 : -1);
-        if (targetIndex >= 0 && targetIndex < week.flashcards.length) {
+        if (targetIndex >= 0 && targetIndex < order.length) {
           goToCard(targetIndex);
           return;
         }
@@ -1738,7 +1922,9 @@ function renderContent() {
   renderMain();
   renderStrip();
 
+  stripRow.appendChild(shuffleBtn);
   stripRow.appendChild(strip);
+  stripRow.appendChild(resetOrderBtn);
 
   mainRow.appendChild(cardPrevBtn);
   mainRow.appendChild(mainWrap);

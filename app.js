@@ -206,7 +206,13 @@ const COURSES = {
           {
             type: "think",
             q: "List three real networks. For each one: what are the nodes, what are the edges, is it directed or undirected, and is it weighted or unweighted?",
-            a: "Three examples (yours can differ — same structure):\n\n1) The World Wide Web\n• Nodes: web pages. Edges: hyperlinks from one page to another.\n• Directed (a link on page A to page B doesn't mean B links back) and unweighted (a link either exists or it doesn't).\n• Weight-forcing question: 'how many times does A link to B, or how much traffic flows along that link?' — turns the 0/1 edge into a count.\n\n2) An airline route map\n• Nodes: airports. Edges: a direct flight route between two airports.\n• Undirected if you only care whether a route exists; unweighted by default.\n• Weight-forcing question: 'how many passengers or flights per week move along this route?'\n\n3) A phone-call log\n• Nodes: people (phone numbers). Edges: a call was made between two people.\n• Directed (caller → receiver) and unweighted if you just record 'did a call happen.'\n• Weight-forcing question: 'how many minutes did they talk, or how many calls did they exchange?'\n\nPattern: weights get forced the moment you ask 'how much / how many' instead of just 'does a connection exist.'",
+            a: "Three examples (yours can differ — same structure):\n\n1) The World Wide Web\n• Nodes: web pages. Edges: hyperlinks from one page to another.\n• Directed (a link on page A to page B doesn't mean B links back) and unweighted (a link either exists or it doesn't).\n• Weight-forcing question: 'how many times does A link to B, or how much traffic flows along that link?' — turns the 0/1 edge into a count.\n\n2) An airline route map\n• Nodes: airports. Edges: a direct flight route between two airports.\n• Undirected if you only care whether a route exists; unweighted by default.\n• Weight-forcing question: 'how many passengers or flights per week move along this route?'\n\n3) The Marvel character network (your marvel_network notebook)\n• Nodes: Marvel characters. Edges: two characters appeared together in the same comic issue.\n• Undirected (co-appearance has no direction) and unweighted if you only record 'did they ever appear together.'\n• Weight-forcing question: 'how many issues have these two characters appeared in together?' — turns a yes/no tie into a strength-of-connection number.\n\nPattern: weights get forced the moment you ask 'how much / how many' instead of just 'does a connection exist.'",
+          },
+          {
+            q: "You have an unweighted network — an edge just marks 'connected' or not. What kind of question forces you to add weights?",
+            choices: ["'How many times / how much flows along this edge?'", "'Is the network directed?'", "'What should I name this node?'", "'How do I draw this network?'"],
+            correct: 0,
+            a: "Weights appear the moment you move from 'does a connection exist' (0/1) to 'how much/how many' — e.g. call minutes, flight passengers, or shared comic-book appearances.",
           },
           {
             type: "think",
@@ -222,6 +228,13 @@ const COURSES = {
             type: "think",
             q: "Take the edge list: A–B, A–C, A–D, B–C, C–D, D–E, E–F.\nDraw the network, then write down every node's degree.",
             a: "Drawing it: A, B, C, D form a tight cluster (A connects to all of B, C, D; B–C and C–D are also connected), and D is the doorway to a short tail D–E–F hanging off the cluster.\n\nDegrees (count each node's edges):\n• A: B, C, D → degree 3\n• B: A, C → degree 2\n• C: A, B, D → degree 3\n• D: A, C, E → degree 3\n• E: D, F → degree 2\n• F: E → degree 1",
+            diagram: {},
+          },
+          {
+            q: "Edge list A–B, A–C, A–D, B–C, C–D, D–E, E–F: which degree sequence (A,B,C,D,E,F) is correct?",
+            choices: ["3, 2, 3, 3, 2, 1", "2, 2, 2, 2, 2, 2", "4, 3, 4, 4, 3, 2", "3, 3, 3, 3, 3, 3"],
+            correct: 0,
+            a: "A:3 (B,C,D), B:2 (A,C), C:3 (A,B,D), D:3 (A,C,E), E:2 (D,F), F:1 (E) — count each node's own edges straight from the list.",
           },
           {
             type: "think",
@@ -229,24 +242,94 @@ const COURSES = {
             a: "Edges: m = 7 (count the list — that's all there is).\n\nSum of degrees: 3+2+3+3+2+1 = 14 = 2m. Every edge has two ends, so it gets counted once for each endpoint — the sum of degrees is always exactly twice the edge count, not just loosely related to it.\n\nAverage degree: ⟨k⟩ = 2m/n = 14/6 ≈ 2.33.\n\nDensity: 2m / [n(n−1)] = 14 / (6·5) = 14/30 ≈ 0.47 — about 47% of all possible pairs among these 6 nodes are actually linked.",
           },
           {
+            q: "That same edge list has how many edges (m)?",
+            choices: ["7", "6", "8", "14"],
+            correct: 0,
+            a: "Count the pairs in the list: A–B, A–C, A–D, B–C, C–D, D–E, E–F = 7 edges. (14 is the sum of degrees, 2m — not m itself.)",
+          },
+          {
+            q: "What is the average degree ⟨k⟩ of that network (n=6, m=7)?",
+            choices: ["2.33 (=14/6)", "7 (=m)", "1.17 (=7/6)", "3.5 (=7/2)"],
+            correct: 0,
+            a: "⟨k⟩ = 2m/n = 14/6 ≈ 2.33 — the sum of degrees (2m) divided by the number of nodes.",
+          },
+          {
+            q: "What is the density of that network?",
+            choices: ["≈0.47 (=14/30)", "≈0.23 (=7/30)", "1.0 — it's fully connected", "≈2.33 — same as average degree"],
+            correct: 0,
+            a: "Density = 2m / [n(n−1)] = 14 / (6·5) = 14/30 ≈ 0.47 — about 47% of all possible pairs are actually linked.",
+          },
+          {
             type: "think",
             q: "Write the network's adjacency matrix, rows and columns ordered A–F. Name two properties this matrix must have simply because the network is undirected and simple — say which is which. Then check that every row sum reproduces the degree you found earlier.",
             a: "Matrix (1 = edge, 0 = none), order A,B,C,D,E,F:\nA: 0 1 1 1 0 0\nB: 1 0 1 0 0 0\nC: 1 1 0 1 0 0\nD: 1 0 1 0 1 0\nE: 0 0 0 1 0 1\nF: 0 0 0 0 1 0\n\nUndirected ⇒ symmetric (a_ij = a_ji — e.g. A–D and D–A are both 1).\nSimple (no self-loops) ⇒ zero diagonal (every a_ii = 0).\n\nRow sums: A=3, B=2, C=3, D=3, E=2, F=1 — exactly the degrees from before. ✓",
+            diagram: {},
+          },
+          {
+            q: "This network is undirected and simple. Its adjacency matrix must be...",
+            choices: ["Symmetric, with a zero diagonal", "Symmetric, with a diagonal of all 1s", "Triangular (values only above the diagonal)", "Symmetric, but self-loops are allowed"],
+            correct: 0,
+            a: "Undirected ⇒ symmetric (a_ij = a_ji). Simple (no self-loops) ⇒ every diagonal entry a_ii = 0.",
           },
           {
             type: "think",
             q: "Find every triangle in the network. Which single node would you remove to disconnect the network, and what does that suggest 'importance' might mean here?",
             a: "Triangles: {A,B,C} (A–B, A–C, B–C all present) and {A,C,D} (A–C, A–D, C–D all present) — just those two, sharing the edge A–C.\n\nRemoving D splits the network into {A,B,C} and {E,F} — the biggest single-node break. (Removing E also disconnects it, but only strands F alone — a smaller break.)\n\nSo 'importance' here isn't about having the most edges — A and C both have degree 3, same as D. It's about sitting on the only path between two otherwise-separate parts of the network, like a bridge or gatekeeper. That's a preview of betweenness centrality, which Week 3 defines properly.",
+            diagram: { triangles: [["A", "B", "C"], ["A", "C", "D"]], cutNode: "D" },
+          },
+          {
+            q: "How many triangles does the A–F network contain?",
+            choices: ["2 — {A,B,C} and {A,C,D}", "0 — there are no triangles", "1 — only {A,B,C}", "4 — one per cluster node"],
+            correct: 0,
+            a: "{A,B,C}: A–B, A–C, B–C all present. {A,C,D}: A–C, A–D, C–D all present. Those are the only two, sharing edge A–C.",
+          },
+          {
+            q: "Which single node's removal splits the network into the most separated pieces?",
+            choices: ["D — it splits off {E,F}", "A — it splits off {B}", "C — it splits off {D}", "F — it splits off nothing, F is a leaf"],
+            correct: 0,
+            a: "Removing D leaves {A,B,C} and {E,F} disconnected — the biggest single-node break, even though A and C have the same degree as D. Being a bridge matters more than degree here.",
           },
           {
             type: "think",
             q: "Now make the edges directed: A→B, A→C, A→D, B→C, C→D, D→E, E→F. Write each node's in-degree and out-degree, and write the adjacency matrix again — which of the row sums and column sums gives which degree now? What real relationship (following? citing? emailing?) would make this exact direction pattern meaningful?",
             a: "In-degree / out-degree:\n• A: in 0, out 3 (→B,C,D)\n• B: in 1, out 1 (→C)\n• C: in 2, out 1 (→D)\n• D: in 2, out 1 (→E)\n• E: in 1, out 1 (→F)\n• F: in 1, out 0\n\nAdjacency matrix (row = source, column = target), order A–F:\nA: 0 1 1 1 0 0\nB: 0 0 1 0 0 0\nC: 0 0 0 1 0 0\nD: 0 0 0 0 1 0\nE: 0 0 0 0 0 1\nF: 0 0 0 0 0 0\n\nRow sums give out-degree (A's row sums to 3, matching out-degree 3). Column sums give in-degree (C's column has two 1s — from A and B — matching in-degree 2).\n\nA relationship this pattern fits: a citation network, where A is a foundational early paper that B, C, and D all cite directly, while C→D→E→F traces a chain of each paper building on the one just before it — an old idea (A) fanning out, then a lineage of follow-up work running forward in time.",
+            diagram: { directed: true },
+          },
+          {
+            q: "Directed version (A→B, A→C, A→D, B→C, C→D, D→E, E→F): what are node C's (in-degree, out-degree)?",
+            choices: ["(2, 1)", "(1, 2)", "(0, 3)", "(2, 2)"],
+            correct: 0,
+            a: "C receives from A and B (in-degree 2) and sends only to D (out-degree 1).",
+          },
+          {
+            q: "In that directed network, which node has out-degree 0?",
+            choices: ["F", "A", "E", "D"],
+            correct: 0,
+            a: "F only receives (from E) and sends nothing onward — it's the end of the chain, out-degree 0.",
           },
           {
             type: "think",
             q: "Sketch the (undirected) network's degree distribution as a bar chart: k on the x-axis, number of nodes on the y-axis. Then write the distances d(A,F) and d(B,E).",
             a: "Degrees were A=3, B=2, C=3, D=3, E=2, F=1, so the bar chart has three bars:\n• k=1 → 1 node (F)\n• k=2 → 2 nodes (B, E)\n• k=3 → 3 nodes (A, C, D)\n(No bars at k=0 or k≥4 — nobody has those degrees.)\n\nDistances (shortest path length, undirected network):\n• d(A,F): A–D–E–F → 3 steps. Nothing shorter exists since F only touches E, and E only touches D and F.\n• d(B,E): B–A–D–E or B–C–D–E → 3 steps either way — B has no route to D's side in 2 steps.",
+            diagram: {},
+          },
+          {
+            q: "In the undirected network's degree distribution, how many nodes have degree exactly 3?",
+            choices: ["3 — A, C, and D", "2 — A and C only", "1 — only D", "6 — all of them"],
+            correct: 0,
+            a: "Degrees were A=3, B=2, C=3, D=3, E=2, F=1 — three nodes (A, C, D) share degree 3.",
+          },
+          {
+            q: "What is d(A,F), the shortest path length from A to F?",
+            choices: ["3 (A–D–E–F)", "1 — they're directly connected", "2 (A–D–F)", "5 — you must pass through every node"],
+            correct: 0,
+            a: "A–D–E–F is 3 steps, and nothing shorter exists — F only touches E, and E only touches D and F.",
+          },
+          {
+            q: "What is d(B,E), the shortest path length from B to E?",
+            choices: ["3 (B–A–D–E or B–C–D–E)", "2 (B–D–E)", "1 — directly connected", "4 — no shorter route exists at all"],
+            correct: 0,
+            a: "B has no direct link to D's side, so the shortest route is 3 steps either via A or via C, both landing on D then E.",
           },
         ],
       },
@@ -835,13 +918,99 @@ function createFlipButton(cardEl) {
   const btn = document.createElement("button");
   btn.type = "button";
   btn.className = "flip-toggle-btn";
-  btn.textContent = "⇄ Flip card";
+  btn.textContent = "⇄";
   btn.setAttribute("aria-label", "Flip card to see the other side");
   btn.addEventListener("click", (e) => {
     e.stopPropagation();
     cardEl.classList.toggle("flipped");
   });
   return btn;
+}
+
+const WEEK1_NODE_POS = {
+  A: [60, 105],
+  B: [60, 40],
+  C: [130, 72],
+  D: [200, 105],
+  E: [260, 72],
+  F: [300, 105],
+};
+
+const WEEK1_EDGES = [
+  ["A", "B"],
+  ["A", "C"],
+  ["A", "D"],
+  ["B", "C"],
+  ["C", "D"],
+  ["D", "E"],
+  ["E", "F"],
+];
+
+function buildNetworkDiagram({ directed = false, triangles = [], cutNode = null } = {}) {
+  const R = 15;
+  const triangleColors = ["rgba(204,31,122,0.22)", "rgba(109,127,224,0.24)"];
+
+  const triangleMarkup = triangles
+    .map((tri, i) => {
+      const pts = tri.map((n) => WEEK1_NODE_POS[n].join(",")).join(" ");
+      return '<polygon points="' + pts + '" fill="' + triangleColors[i % triangleColors.length] + '" />';
+    })
+    .join("");
+
+  const edgeMarkup = WEEK1_EDGES.map(([from, to]) => {
+    const [x1, y1] = WEEK1_NODE_POS[from];
+    let [x2, y2] = WEEK1_NODE_POS[to];
+    let markerAttr = "";
+    if (directed) {
+      const dx = x2 - x1;
+      const dy = y2 - y1;
+      const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+      const shorten = R + 6;
+      x2 = x2 - (dx / dist) * shorten;
+      y2 = y2 - (dy / dist) * shorten;
+      markerAttr = ' marker-end="url(#arrowhead)"';
+    }
+    return (
+      '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2.toFixed(1) + '" y2="' + y2.toFixed(1) +
+      '" stroke="#9384ab" stroke-width="2"' + markerAttr + " />"
+    );
+  }).join("");
+
+  const nodeMarkup = Object.entries(WEEK1_NODE_POS)
+    .map(([label, [x, y]]) => {
+      const isCut = label === cutNode;
+      const fill = isCut ? "#cc1f7a" : "#6d7fe0";
+      const ring = isCut
+        ? '<circle cx="' + x + '" cy="' + y + '" r="' + (R + 5) +
+          '" fill="none" stroke="#cc1f7a" stroke-width="2" stroke-dasharray="4 3" />'
+        : "";
+      return (
+        ring +
+        '<circle cx="' + x + '" cy="' + y + '" r="' + R + '" fill="' + fill + '" />' +
+        '<text x="' + x + '" y="' + (y + 5) + '" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">' +
+        label +
+        "</text>"
+      );
+    })
+    .join("");
+
+  const defs = directed
+    ? '<defs><marker id="arrowhead" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">' +
+      '<path d="M0,0 L8,4 L0,8 Z" fill="#9384ab" /></marker></defs>'
+    : "";
+
+  const label = directed
+    ? "Directed diagram of the six-node network, arrows show direction"
+    : "Diagram of the six-node network";
+
+  return (
+    '<svg viewBox="0 0 320 140" role="img" aria-label="' + label + '">' +
+    defs +
+    triangleMarkup +
+    edgeMarkup +
+    nodeMarkup +
+    "</svg>"
+  );
 }
 
 function buildQuizCard(cardData, onFirstAttempt) {
@@ -972,6 +1141,15 @@ function buildQuizCard(cardData, onFirstAttempt) {
   return card;
 }
 
+function makeThinkBadge() {
+  const badge = document.createElement("span");
+  badge.className = "think-badge";
+  badge.textContent = "🧠";
+  badge.setAttribute("role", "img");
+  badge.setAttribute("aria-label", "Think question");
+  return badge;
+}
+
 function buildThinkCard(cardData) {
   const card = document.createElement("div");
   card.className = "flashcard flashcard-main flashcard-think";
@@ -979,21 +1157,11 @@ function buildThinkCard(cardData) {
   const inner = document.createElement("div");
   inner.className = "flashcard-inner";
 
-  function makeThinkBadge() {
-    const badge = document.createElement("span");
-    badge.className = "think-badge";
-    badge.textContent = "Think";
-    return badge;
-  }
-
   const front = document.createElement("div");
   front.className = "flashcard-face flashcard-front flashcard-quiz-front flashcard-think-front";
 
-  const frontTopRow = document.createElement("div");
-  frontTopRow.className = "flashcard-top-row";
-  frontTopRow.appendChild(makeThinkBadge());
-  frontTopRow.appendChild(createFlipButton(card));
-  front.appendChild(frontTopRow);
+  front.appendChild(makeThinkBadge());
+  front.appendChild(createFlipButton(card));
 
   const question = document.createElement("p");
   question.className = "flashcard-question";
@@ -1008,16 +1176,20 @@ function buildThinkCard(cardData) {
   const back = document.createElement("div");
   back.className = "flashcard-face flashcard-back flashcard-think-back";
 
-  const backTopRow = document.createElement("div");
-  backTopRow.className = "flashcard-top-row";
-  backTopRow.appendChild(makeThinkBadge());
-  backTopRow.appendChild(createFlipButton(card));
-  back.appendChild(backTopRow);
+  back.appendChild(makeThinkBadge());
+  back.appendChild(createFlipButton(card));
 
   const backQuestion = document.createElement("p");
   backQuestion.className = "flashcard-back-question";
   backQuestion.textContent = cardData.q;
   back.appendChild(backQuestion);
+
+  if (cardData.diagram) {
+    const diagramWrap = document.createElement("div");
+    diagramWrap.className = "flashcard-diagram";
+    diagramWrap.innerHTML = buildNetworkDiagram(cardData.diagram);
+    back.appendChild(diagramWrap);
+  }
 
   const explanation = document.createElement("p");
   explanation.className = "flashcard-explanation flashcard-think-answer";

@@ -209,6 +209,7 @@ const COURSES = {
             a: "Three examples (yours can differ — same structure):\n\n1) The World Wide Web\n• Nodes: web pages. Edges: hyperlinks from one page to another.\n• Directed (a link on page A to page B doesn't mean B links back) and unweighted (a link either exists or it doesn't).\n• Weight-forcing question: 'how many times does A link to B, or how much traffic flows along that link?' — turns the 0/1 edge into a count.\n\n2) An airline route map\n• Nodes: airports. Edges: a direct flight route between two airports.\n• Undirected if you only care whether a route exists; unweighted by default.\n• Weight-forcing question: 'how many passengers or flights per week move along this route?'\n\n3) The Marvel character network (your marvel_network notebook)\n• Nodes: Marvel characters. Edges: two characters appeared together in the same comic issue.\n• Undirected (co-appearance has no direction) and unweighted if you only record 'did they ever appear together.'\n• Weight-forcing question: 'how many issues have these two characters appeared in together?' — turns a yes/no tie into a strength-of-connection number.\n\nPattern: weights get forced the moment you ask 'how much / how many' instead of just 'does a connection exist.'",
           },
           {
+            think: true,
             q: "You have an unweighted network — an edge just marks 'connected' or not. What kind of question forces you to add weights?",
             choices: ["'How many times / how much flows along this edge?'", "'Is the network directed?'", "'What should I name this node?'", "'How do I draw this network?'"],
             correct: 0,
@@ -231,6 +232,7 @@ const COURSES = {
             diagram: {},
           },
           {
+            think: true,
             q: "Edge list A–B, A–C, A–D, B–C, C–D, D–E, E–F: which degree sequence (A,B,C,D,E,F) is correct?",
             choices: ["3, 2, 3, 3, 2, 1", "2, 2, 2, 2, 2, 2", "4, 3, 4, 4, 3, 2", "3, 3, 3, 3, 3, 3"],
             correct: 0,
@@ -242,18 +244,21 @@ const COURSES = {
             a: "Edges: m = 7 (count the list — that's all there is).\n\nSum of degrees: 3+2+3+3+2+1 = 14 = 2m. Every edge has two ends, so it gets counted once for each endpoint — the sum of degrees is always exactly twice the edge count, not just loosely related to it.\n\nAverage degree: ⟨k⟩ = 2m/n = 14/6 ≈ 2.33.\n\nDensity: 2m / [n(n−1)] = 14 / (6·5) = 14/30 ≈ 0.47 — about 47% of all possible pairs among these 6 nodes are actually linked.",
           },
           {
+            think: true,
             q: "That same edge list has how many edges (m)?",
             choices: ["7", "6", "8", "14"],
             correct: 0,
             a: "Count the pairs in the list: A–B, A–C, A–D, B–C, C–D, D–E, E–F = 7 edges. (14 is the sum of degrees, 2m — not m itself.)",
           },
           {
+            think: true,
             q: "What is the average degree ⟨k⟩ of that network (n=6, m=7)?",
             choices: ["2.33 (=14/6)", "7 (=m)", "1.17 (=7/6)", "3.5 (=7/2)"],
             correct: 0,
             a: "⟨k⟩ = 2m/n = 14/6 ≈ 2.33 — the sum of degrees (2m) divided by the number of nodes.",
           },
           {
+            think: true,
             q: "What is the density of that network?",
             choices: ["≈0.47 (=14/30)", "≈0.23 (=7/30)", "1.0 — it's fully connected", "≈2.33 — same as average degree"],
             correct: 0,
@@ -266,6 +271,7 @@ const COURSES = {
             diagram: {},
           },
           {
+            think: true,
             q: "This network is undirected and simple. Its adjacency matrix must be...",
             choices: ["Symmetric, with a zero diagonal", "Symmetric, with a diagonal of all 1s", "Triangular (values only above the diagonal)", "Symmetric, but self-loops are allowed"],
             correct: 0,
@@ -278,12 +284,14 @@ const COURSES = {
             diagram: { triangles: [["A", "B", "C"], ["A", "C", "D"]], cutNode: "D" },
           },
           {
+            think: true,
             q: "How many triangles does the A–F network contain?",
             choices: ["2 — {A,B,C} and {A,C,D}", "0 — there are no triangles", "1 — only {A,B,C}", "4 — one per cluster node"],
             correct: 0,
             a: "{A,B,C}: A–B, A–C, B–C all present. {A,C,D}: A–C, A–D, C–D all present. Those are the only two, sharing edge A–C.",
           },
           {
+            think: true,
             q: "Which single node's removal splits the network into the most separated pieces?",
             choices: ["D — it splits off {E,F}", "A — it splits off {B}", "C — it splits off {D}", "F — it splits off nothing, F is a leaf"],
             correct: 0,
@@ -296,12 +304,14 @@ const COURSES = {
             diagram: { directed: true },
           },
           {
+            think: true,
             q: "Directed version (A→B, A→C, A→D, B→C, C→D, D→E, E→F): what are node C's (in-degree, out-degree)?",
             choices: ["(2, 1)", "(1, 2)", "(0, 3)", "(2, 2)"],
             correct: 0,
             a: "C receives from A and B (in-degree 2) and sends only to D (out-degree 1).",
           },
           {
+            think: true,
             q: "In that directed network, which node has out-degree 0?",
             choices: ["F", "A", "E", "D"],
             correct: 0,
@@ -314,18 +324,21 @@ const COURSES = {
             diagram: {},
           },
           {
+            think: true,
             q: "In the undirected network's degree distribution, how many nodes have degree exactly 3?",
             choices: ["3 — A, C, and D", "2 — A and C only", "1 — only D", "6 — all of them"],
             correct: 0,
             a: "Degrees were A=3, B=2, C=3, D=3, E=2, F=1 — three nodes (A, C, D) share degree 3.",
           },
           {
+            think: true,
             q: "What is d(A,F), the shortest path length from A to F?",
             choices: ["3 (A–D–E–F)", "1 — they're directly connected", "2 (A–D–F)", "5 — you must pass through every node"],
             correct: 0,
             a: "A–D–E–F is 3 steps, and nothing shorter exists — F only touches E, and E only touches D and F.",
           },
           {
+            think: true,
             q: "What is d(B,E), the shortest path length from B to E?",
             choices: ["3 (B–A–D–E or B–C–D–E)", "2 (B–D–E)", "1 — directly connected", "4 — no shorter route exists at all"],
             correct: 0,
@@ -1020,10 +1033,13 @@ function buildQuizCard(cardData, onFirstAttempt) {
   const inner = document.createElement("div");
   inner.className = "flashcard-inner";
 
+  card.appendChild(createFlipButton(card));
+  if (cardData.think) {
+    card.appendChild(makeThinkBadge());
+  }
+
   const front = document.createElement("div");
   front.className = "flashcard-face flashcard-front flashcard-quiz-front";
-
-  front.appendChild(createFlipButton(card));
 
   const question = document.createElement("p");
   question.className = "flashcard-question";
@@ -1070,7 +1086,6 @@ function buildQuizCard(cardData, onFirstAttempt) {
   const explanation = document.createElement("p");
   explanation.className = "flashcard-explanation";
   explanation.textContent = cardData.a;
-  back.appendChild(createFlipButton(card));
   back.appendChild(backQuestion);
   back.appendChild(resultLine);
   back.appendChild(explanation);
@@ -1157,11 +1172,11 @@ function buildThinkCard(cardData) {
   const inner = document.createElement("div");
   inner.className = "flashcard-inner";
 
+  card.appendChild(createFlipButton(card));
+  card.appendChild(makeThinkBadge());
+
   const front = document.createElement("div");
   front.className = "flashcard-face flashcard-front flashcard-quiz-front flashcard-think-front";
-
-  front.appendChild(makeThinkBadge());
-  front.appendChild(createFlipButton(card));
 
   const question = document.createElement("p");
   question.className = "flashcard-question";
@@ -1175,9 +1190,6 @@ function buildThinkCard(cardData) {
 
   const back = document.createElement("div");
   back.className = "flashcard-face flashcard-back flashcard-think-back";
-
-  back.appendChild(makeThinkBadge());
-  back.appendChild(createFlipButton(card));
 
   const backQuestion = document.createElement("p");
   backQuestion.className = "flashcard-back-question";

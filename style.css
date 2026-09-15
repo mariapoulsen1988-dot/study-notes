@@ -195,6 +195,7 @@ h1 {
 }
 
 .flashcard {
+  position: relative;
   perspective: 1200px;
   height: 240px;
   width: 100%;
@@ -282,6 +283,19 @@ h1 {
 .flip-toggle-btn:hover {
   opacity: 1;
   border-color: var(--accent2);
+}
+
+@media (pointer: coarse) {
+  .flip-toggle-btn {
+    /* Keep the visible circle small, but give touch a bigger, forgiving target. */
+    overflow: visible;
+  }
+
+  .flip-toggle-btn::before {
+    content: "";
+    position: absolute;
+    inset: -14px;
+  }
 }
 
 .flashcard-back-question {

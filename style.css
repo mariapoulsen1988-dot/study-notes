@@ -550,13 +550,8 @@ h1 {
   transition: border-color 0.15s, background 0.15s;
 }
 
-.think-assess-btn:hover:not(:disabled) {
+.think-assess-btn:hover {
   border-color: var(--accent2);
-}
-
-.think-assess-btn:disabled {
-  cursor: default;
-  opacity: 0.6;
 }
 
 .think-assess-good.selected {

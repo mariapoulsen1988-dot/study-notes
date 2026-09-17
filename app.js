@@ -2,6 +2,7 @@
 const COURSES = {
   "social-graphs": {
     label: "Social Graphs and Interactions",
+    weekly: true,
     weeks: {
       1: {
         flashcards: [
@@ -1371,6 +1372,7 @@ const COURSES = {
   },
   "good-to-know": {
     label: "Good to Know",
+    weekly: false,
     weeks: {
       1: {
         flashcards: [
@@ -1468,6 +1470,30 @@ const COURSES = {
             choices: ["Not too many things can be above average, or the average would be higher than we know it is", "Most things are exactly average", "The variance controls how many things are above average", "Negative values pull the average down without limit"],
             correct: 0,
             a: "\"Not too many things can be above average, or else the average would be higher than we know it actually is.\" Non-negativity is what makes this bite — there's nothing below 0 to counterbalance a fat high tail.",
+          },
+          {
+            q: "Markov's inequality has an extended form: for a r.v. X and a monotonically increasing function f with f(X) ≥ 0, P(X ≥ ε) ≤ ?",
+            choices: ["E[f(X)] / f(ε)", "E(X) / f(ε)", "f(E(X)) / ε", "E[f(X)] · f(ε)"],
+            correct: 0,
+            a: "P(X ≥ ε) ≤ E[f(X)] / f(ε). Same shape as plain Markov, just measured through f instead of X directly.",
+          },
+          {
+            q: "What two conditions does the extended Markov's inequality require of f?",
+            choices: ["f is monotonically increasing, and f(X) is non-negative", "f must be linear and bounded", "f must be its own inverse", "f must be strictly decreasing"],
+            correct: 0,
+            a: "Monotonically increasing so that X≥ε ⇔ f(X)≥f(ε) (the event doesn't change), and f(X)≥0 so the original non-negativity argument still applies — now to f(X) instead of X.",
+          },
+          {
+            think: true,
+            q: "Plug f(x) = x into the extended Markov's inequality P(X≥ε) ≤ E[f(X)]/f(ε). What do you get?",
+            choices: ["Exactly the plain Markov's inequality: P(X≥ε) ≤ E(X)/ε", "Chebyshev's inequality", "A tighter bound than plain Markov", "An undefined expression"],
+            correct: 0,
+            a: "f(x)=x is monotonically increasing, and f(X)=X≥0 is exactly the original requirement — so the extended form collapses back to P(X≥ε) ≤ E(X)/ε. The 'plain' Markov's inequality you already know is just the f(x)=x special case.",
+          },
+          {
+            type: "think",
+            q: "Using the extended Markov's inequality with f(x) = x² instead of f(x) = x (still assuming X ≥ 0), what bound do you get for P(X ≥ t), and why might it be tighter than the plain E(X)/t bound?",
+            a: "X≥0 and x² is monotonically increasing on [0,∞), so X≥t ⇔ X²≥t². Applying the extended inequality with f(x)=x²: P(X≥t) = P(X²≥t²) ≤ E(X²)/t².\n\nThis can be tighter than E(X)/t because E(X²) folds in the spread of the distribution, not just its center — a distribution with the same mean but less spread gives a smaller E(X²), and therefore a tighter tail bound. This is the same trick that leads to Chebyshev's inequality.",
           },
         ],
       },
@@ -1589,6 +1615,7 @@ function saveState() {
 }
 
 loadState();
+if (!COURSES[activeCourse].weekly) activeWeek = 1;
 
 const courseTabsEl = document.getElementById("course-tabs");
 const weekNavEl = document.getElementById("week-nav");
@@ -1649,6 +1676,7 @@ function renderCourseTabs() {
       activeWeek = 1;
       activeCardIndex = 0;
       weekNavCollapsed = false;
+      mixPickerOpen = false;
       saveState();
       renderCourseTabs();
       renderWeekNav();
@@ -1659,6 +1687,14 @@ function renderCourseTabs() {
 }
 
 function renderWeekNav() {
+  if (!COURSES[activeCourse].weekly) {
+    weekNavEl.classList.remove("collapsed");
+    weekNavEl.innerHTML = "";
+    weekPillBtn.hidden = true;
+    document.body.classList.remove("week-focused");
+    return;
+  }
+
   weekNavEl.classList.toggle("collapsed", weekNavCollapsed && !mixPickerOpen);
   updateWeekPill();
 
@@ -1849,7 +1885,7 @@ function renderContent() {
     const card = week.flashcards[canonicalIndex];
     const builtCard =
       card.type === "think"
-        ? buildThinkCard(card, (status) => {
+        ? buildThinkCard(card, cardStatus[canonicalIndex], (status) => {
             cardStatus[canonicalIndex] = status;
             saveState();
             renderStrip();
@@ -2325,7 +2361,7 @@ function makeThinkBadge() {
   return badge;
 }
 
-function buildThinkCard(cardData, onSelfAssess) {
+function buildThinkCard(cardData, initialStatus, onSelfAssess) {
   const card = document.createElement("div");
   card.className = "flashcard flashcard-main flashcard-think";
 
@@ -2384,23 +2420,25 @@ function buildThinkCard(cardData, onSelfAssess) {
   const laterBtn = document.createElement("button");
   laterBtn.type = "button";
   laterBtn.className = "think-assess-btn think-assess-later";
-  laterBtn.textContent = "🔁 Come back later";
+  laterBtn.textContent = "🕓 Come back later";
 
-  function markAssessed(status, chosenBtn) {
-    gotItBtn.disabled = true;
-    laterBtn.disabled = true;
-    chosenBtn.classList.add("selected");
-    if (onSelfAssess) onSelfAssess(status);
+  function setAssessed(status) {
+    gotItBtn.classList.toggle("selected", status === "correct");
+    laterBtn.classList.toggle("selected", status === "wrong");
   }
 
   gotItBtn.addEventListener("click", (e) => {
     e.stopPropagation();
-    markAssessed("correct", gotItBtn);
+    setAssessed("correct");
+    if (onSelfAssess) onSelfAssess("correct");
   });
   laterBtn.addEventListener("click", (e) => {
     e.stopPropagation();
-    markAssessed("wrong", laterBtn);
+    setAssessed("wrong");
+    if (onSelfAssess) onSelfAssess("wrong");
   });
+
+  setAssessed(initialStatus);
 
   assessRow.appendChild(gotItBtn);
   assessRow.appendChild(laterBtn);

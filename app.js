@@ -1694,9 +1694,11 @@ function renderWeekNav() {
     weekNavEl.innerHTML = "";
     weekPillBtn.hidden = true;
     document.body.classList.remove("week-focused");
+    document.body.classList.add("flat-course");
     return;
   }
 
+  document.body.classList.remove("flat-course");
   weekNavEl.classList.toggle("collapsed", weekNavCollapsed && !mixPickerOpen);
   updateWeekPill();
 

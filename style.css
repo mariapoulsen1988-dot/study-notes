@@ -422,14 +422,6 @@ h1 {
   font-size: 1.05rem;
 }
 
-.flashcard-think-hint {
-  margin: 0;
-  text-align: center;
-  font-size: 0.85rem;
-  font-style: italic;
-  opacity: 0.65;
-}
-
 .flashcard-think-answer {
   white-space: pre-line;
   text-align: left;
@@ -535,6 +527,49 @@ h1 {
 }
 
 .flashcard-try-again.show {
+  opacity: 1;
+}
+
+.think-assess-row {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 4px;
+}
+
+.think-assess-btn {
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.think-assess-btn:hover:not(:disabled) {
+  border-color: var(--accent2);
+}
+
+.think-assess-btn:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.think-assess-good.selected {
+  border-color: #2e9e5b;
+  background: #e6f7ec;
+  color: #1c6b3d;
+  opacity: 1;
+}
+
+.think-assess-later.selected {
+  border-color: #96544f;
+  background: #f3e3e1;
+  color: #6f423e;
   opacity: 1;
 }
 

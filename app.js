@@ -249,54 +249,54 @@ const COURSES = {
           },
           {
             think: true,
-            q: "That same edge list has how many edges (m)?",
+            q: "The edge list A–B, A–C, A–D, B–C, C–D, D–E, E–F has how many edges (m)?",
             choices: ["7", "6", "8", "14"],
             correct: 0,
             a: "Count the pairs in the list: A–B, A–C, A–D, B–C, C–D, D–E, E–F = 7 edges. (14 is the sum of degrees, 2m — not m itself.)",
           },
           {
             think: true,
-            q: "What is the average degree ⟨k⟩ of that network (n=6, m=7)?",
+            q: "A network has n=6 nodes and m=7 edges. What is its average degree ⟨k⟩?",
             choices: ["2.33 (=14/6)", "7 (=m)", "1.17 (=7/6)", "3.5 (=7/2)"],
             correct: 0,
             a: "⟨k⟩ = 2m/n = 14/6 ≈ 2.33 — the sum of degrees (2m) divided by the number of nodes.",
           },
           {
             think: true,
-            q: "What is the density of that network?",
+            q: "A network has n=6 nodes and m=7 edges. What is its density?",
             choices: ["≈0.47 (=14/30)", "≈0.23 (=7/30)", "1.0 — it's fully connected", "≈2.33 — same as average degree"],
             correct: 0,
             a: "Density = 2m / [n(n−1)] = 14 / (6·5) = 14/30 ≈ 0.47 — about 47% of all possible pairs are actually linked.",
           },
           {
             type: "think",
-            q: "Write the network's adjacency matrix, rows and columns ordered A–F. Name two properties this matrix must have simply because the network is undirected and simple — say which is which. Then check that every row sum reproduces the degree you found earlier.",
+            q: "For the network A–B, A–C, A–D, B–C, C–D, D–E, E–F, write its adjacency matrix, rows and columns ordered A–F. Name two properties this matrix must have simply because the network is undirected and simple — say which is which. Then check that every row sum reproduces each node's degree.",
             a: "Matrix (1 = edge, 0 = none), order A,B,C,D,E,F:\nA: 0 1 1 1 0 0\nB: 1 0 1 0 0 0\nC: 1 1 0 1 0 0\nD: 1 0 1 0 1 0\nE: 0 0 0 1 0 1\nF: 0 0 0 0 1 0\n\nUndirected ⇒ symmetric (a_ij = a_ji — e.g. A–D and D–A are both 1).\nSimple (no self-loops) ⇒ zero diagonal (every a_ii = 0).\n\nRow sums: A=3, B=2, C=3, D=3, E=2, F=1 — exactly the degrees from before. ✓",
             diagram: {},
           },
           {
             think: true,
-            q: "This network is undirected and simple. Its adjacency matrix must be...",
+            q: "An undirected, simple network's adjacency matrix must always be...",
             choices: ["Symmetric, with a zero diagonal", "Symmetric, with a diagonal of all 1s", "Triangular (values only above the diagonal)", "Symmetric, but self-loops are allowed"],
             correct: 0,
             a: "Undirected ⇒ symmetric (a_ij = a_ji). Simple (no self-loops) ⇒ every diagonal entry a_ii = 0.",
           },
           {
             type: "think",
-            q: "Find every triangle in the network. Which single node would you remove to disconnect the network, and what does that suggest 'importance' might mean here?",
+            q: "In the network A–B, A–C, A–D, B–C, C–D, D–E, E–F, find every triangle. Which single node would you remove to disconnect the network, and what does that suggest 'importance' might mean here?",
             a: "Triangles: {A,B,C} (A–B, A–C, B–C all present) and {A,C,D} (A–C, A–D, C–D all present) — just those two, sharing the edge A–C.\n\nRemoving D splits the network into {A,B,C} and {E,F} — the biggest single-node break. (Removing E also disconnects it, but only strands F alone — a smaller break.)\n\nSo 'importance' here isn't about having the most edges — A and C both have degree 3, same as D. It's about sitting on the only path between two otherwise-separate parts of the network, like a bridge or gatekeeper. That's a preview of betweenness centrality, which Week 3 defines properly.",
             diagram: { triangles: [["A", "B", "C"], ["A", "C", "D"]], cutNode: "D" },
           },
           {
             think: true,
-            q: "How many triangles does the A–F network contain?",
+            q: "How many triangles does the network A–B, A–C, A–D, B–C, C–D, D–E, E–F contain?",
             choices: ["2 — {A,B,C} and {A,C,D}", "0 — there are no triangles", "1 — only {A,B,C}", "4 — one per cluster node"],
             correct: 0,
             a: "{A,B,C}: A–B, A–C, B–C all present. {A,C,D}: A–C, A–D, C–D all present. Those are the only two, sharing edge A–C.",
           },
           {
             think: true,
-            q: "Which single node's removal splits the network into the most separated pieces?",
+            q: "In the network A–B, A–C, A–D, B–C, C–D, D–E, E–F, which single node's removal splits it into the most separated pieces?",
             choices: ["D — it splits off {E,F}", "A — it splits off {B}", "C — it splits off {D}", "F — it splits off nothing, F is a leaf"],
             correct: 0,
             a: "Removing D leaves {A,B,C} and {E,F} disconnected — the biggest single-node break, even though A and C have the same degree as D. Being a bridge matters more than degree here.",
@@ -316,14 +316,14 @@ const COURSES = {
           },
           {
             think: true,
-            q: "In that directed network, which node has out-degree 0?",
+            q: "In the directed network A→B, A→C, A→D, B→C, C→D, D→E, E→F, which node has out-degree 0?",
             choices: ["F", "A", "E", "D"],
             correct: 0,
             a: "F only receives (from E) and sends nothing onward — it's the end of the chain, out-degree 0.",
           },
           {
             type: "think",
-            q: "Sketch the (undirected) network's degree distribution as a bar chart: k on the x-axis, number of nodes on the y-axis. Then write the distances d(A,F) and d(B,E).",
+            q: "For the (undirected) network A–B, A–C, A–D, B–C, C–D, D–E, E–F, sketch its degree distribution as a bar chart: k on the x-axis, number of nodes on the y-axis. Then write the distances d(A,F) and d(B,E).",
             a: "Degrees were A=3, B=2, C=3, D=3, E=2, F=1, so the bar chart has three bars:\n• k=1 → 1 node (F)\n• k=2 → 2 nodes (B, E)\n• k=3 → 3 nodes (A, C, D)\n(No bars at k=0 or k≥4 — nobody has those degrees.)\n\nDistances (shortest path length, undirected network):\n• d(A,F): A–D–E–F → 3 steps. Nothing shorter exists since F only touches E, and E only touches D and F.\n• d(B,E): B–A–D–E or B–C–D–E → 3 steps either way — B has no route to D's side in 2 steps.",
             diagram: {},
           },
@@ -1369,6 +1369,117 @@ const COURSES = {
       8: null,
     },
   },
+  "good-to-know": {
+    label: "Good to Know",
+    weeks: {
+      1: {
+        flashcards: [
+          {
+            q: "Markov's inequality: for a non-negative random variable X and t > 0, P(X ≥ t) ≤ ?",
+            choices: ["E(X) / t", "t / E(X)", "Var(X) / t", "1 − E(X)/t"],
+            correct: 0,
+            a: "P(X ≥ t) ≤ E(X)/t. It only needs the mean — no shape, variance, or distribution assumptions required.",
+          },
+          {
+            q: "What's the one condition Markov's inequality requires of X?",
+            choices: ["X is non-negative (X ≥ 0)", "X is normally distributed", "X has finite variance", "X is symmetric about its mean"],
+            correct: 0,
+            a: "Non-negativity is the whole requirement. No variance, symmetry, or specific distribution needed — that's what makes it so widely usable (and also why the bound is often loose).",
+          },
+          {
+            type: "think",
+            q: "Why does Markov's inequality require X ≥ 0? What would break if X could go negative?",
+            a: "The bound works by imagining the worst case: pile as much mass as possible right at t (or above) while the rest sits as low as it's allowed to go, and see what that does to the mean. If the 'rest' can only go as low as 0, there's a hard floor on how much it can drag the mean down — so a big chunk of mass ≥ t forces E(X) to be at least t·P(X≥t). If X could go negative, you could stash mass arbitrarily far below 0 to 'pay for' piling up even more mass above t, all while still landing on the same E(X). The floor at 0 is exactly what blocks that compensation trick.",
+            diagram: {
+              svg:
+                '<svg viewBox="0 0 400 140" role="img" aria-label="Number line with a wall at zero blocking negative values, a few low values near the wall, the mean marked further right, and one big value out past the mean">' +
+                '<line x1="70" y1="28" x2="70" y2="115" stroke="#cc1f7a" stroke-width="4" />' +
+                '<line x1="59" y1="34" x2="70" y2="45" stroke="#cc1f7a" stroke-width="2" />' +
+                '<line x1="59" y1="54" x2="70" y2="65" stroke="#cc1f7a" stroke-width="2" />' +
+                '<line x1="59" y1="74" x2="70" y2="85" stroke="#cc1f7a" stroke-width="2" />' +
+                '<line x1="59" y1="94" x2="70" y2="105" stroke="#cc1f7a" stroke-width="2" />' +
+                '<text x="70" y="129" text-anchor="middle" font-size="11" font-weight="700" fill="#cc1f7a">0 (floor)</text>' +
+                '<line x1="70" y1="115" x2="385" y2="115" stroke="#9384ab" stroke-width="1.5" />' +
+                '<circle cx="90" cy="115" r="5" fill="#6d7fe0" />' +
+                '<circle cx="105" cy="115" r="5" fill="#6d7fe0" />' +
+                '<circle cx="120" cy="115" r="5" fill="#6d7fe0" />' +
+                '<circle cx="135" cy="115" r="5" fill="#6d7fe0" />' +
+                '<line x1="180" y1="58" x2="180" y2="115" stroke="#6d7fe0" stroke-width="1.5" stroke-dasharray="3 3" />' +
+                '<text x="180" y="48" text-anchor="middle" font-size="12" font-weight="700" fill="#6d7fe0">E(X)</text>' +
+                '<circle cx="340" cy="60" r="7" fill="#cc1f7a" />' +
+                '<line x1="340" y1="67" x2="340" y2="115" stroke="#cc1f7a" stroke-width="1.5" stroke-dasharray="2 2" />' +
+                '<text x="340" y="45" text-anchor="middle" font-size="11" font-weight="700" fill="#cc1f7a">one big value</text>' +
+                '<text x="28" y="78" text-anchor="middle" font-size="18" fill="#cc1f7a">✕</text>' +
+                '<text x="28" y="96" text-anchor="middle" font-size="10" fill="#cc1f7a">X&lt;0</text>' +
+                "</svg>",
+            },
+          },
+          {
+            type: "think",
+            q: "Sketch why P(X ≥ t) ≤ E(X)/t makes sense, using the picture of a distribution's tail.",
+            a: "E(X) is a weighted average over the whole distribution. Let p = P(X ≥ t) be the tail mass. That tail alone contributes at least t·p to the average (each point in it is worth ≥ t). Everything else contributes ≥ 0, since X ≥ 0 everywhere. So E(X) ≥ t·p + 0, which rearranges straight to p ≤ E(X)/t. In the picture: the shaded tail can't be too fat, or it would drag the mean above the value you already know it to be.",
+            diagram: {
+              svg:
+                '<svg viewBox="0 0 400 140" role="img" aria-label="Right-skewed distribution with mean E(X) and threshold t marked; the tail from t onward is shaded to represent P(X at least t)">' +
+                '<polyline points="30,110 45,70 60,40 75,28 90,30 105,38 120,50 140,65 165,78 195,88 225,94 260,98 300,102 340,106 380,110" fill="none" stroke="#6d7fe0" stroke-width="2.5" />' +
+                '<polygon points="260,98 300,102 340,106 380,110 260,110" fill="rgba(204,31,122,0.28)" />' +
+                '<line x1="30" y1="110" x2="385" y2="110" stroke="#9384ab" stroke-width="1.5" />' +
+                '<line x1="140" y1="60" x2="140" y2="110" stroke="#6d7fe0" stroke-width="1.5" stroke-dasharray="3 3" />' +
+                '<line x1="260" y1="22" x2="260" y2="110" stroke="#cc1f7a" stroke-width="1.5" stroke-dasharray="3 3" />' +
+                '<text x="140" y="125" text-anchor="middle" font-size="13" font-weight="700" fill="#6d7fe0">E(X)</text>' +
+                '<text x="260" y="16" text-anchor="middle" font-size="13" font-weight="700" fill="#cc1f7a">t</text>' +
+                '<text x="322" y="92" text-anchor="middle" font-size="12" font-weight="700" fill="#cc1f7a">P(X ≥ t)</text>' +
+                "</svg>",
+            },
+          },
+          {
+            q: "If average income E(X) = $50,000, what's the max fraction of people earning ≥ $100,000?",
+            choices: ["1/2 (50%)", "1/10 (10%)", "1/4 (25%)", "1 (100%)"],
+            correct: 0,
+            a: "P(X≥100,000) ≤ 50,000/100,000 = 1/2. If more than half made ≥$100k, the average alone would already exceed $50k.",
+          },
+          {
+            q: "Same E(X) = $50,000 — max fraction of people earning ≥ $500,000?",
+            choices: ["1/10 (10%)", "1/2 (50%)", "1/5 (20%)", "1/50 (2%)"],
+            correct: 0,
+            a: "P(X≥500,000) ≤ 50,000/500,000 = 1/10.",
+          },
+          {
+            q: "Same E(X) = $50,000 — max fraction of people earning ≥ $5,000,000?",
+            choices: ["1/100 (1%)", "1/10 (10%)", "1/1000 (0.1%)", "1/2 (50%)"],
+            correct: 0,
+            a: "P(X≥5,000,000) ≤ 50,000/5,000,000 = 1/100. Notice the pattern: multiply t by 10, the bound divides by 10.",
+          },
+          {
+            think: true,
+            q: "Rewrite t as a·E(X) — some multiple of the mean. Markov's inequality then becomes P(X ≥ a·E(X)) ≤ ?",
+            choices: ["1/a", "a", "E(X)/a²", "a·E(X)"],
+            correct: 0,
+            a: "P(X ≥ a·E(X)) ≤ 1/a. That's the general shape behind the income example: a=2 → ≤1/2, a=10 → ≤1/10, a=100 → ≤1/100.",
+          },
+          {
+            q: "What does Markov's inequality NOT give you?",
+            choices: ["An exact probability — only a worst-case upper bound", "Any bound at all on P(X≥t)", "A bound that uses the mean", "A bound valid for non-negative X"],
+            correct: 0,
+            a: "It's often a very loose upper bound — the true P(X≥t) can be far smaller. It's a guarantee ('can't be worse than this'), not an estimate of the actual probability.",
+          },
+          {
+            q: "One-line intuition for Markov's inequality?",
+            choices: ["Not too many things can be above average, or the average would be higher than we know it is", "Most things are exactly average", "The variance controls how many things are above average", "Negative values pull the average down without limit"],
+            correct: 0,
+            a: "\"Not too many things can be above average, or else the average would be higher than we know it actually is.\" Non-negativity is what makes this bite — there's nothing below 0 to counterbalance a fat high tail.",
+          },
+        ],
+      },
+      2: null,
+      3: null,
+      4: null,
+      5: null,
+      6: null,
+      7: null,
+      8: null,
+    },
+  },
 };
 
 const NUM_WEEKS = 8;
@@ -1738,7 +1849,11 @@ function renderContent() {
     const card = week.flashcards[canonicalIndex];
     const builtCard =
       card.type === "think"
-        ? buildThinkCard(card)
+        ? buildThinkCard(card, (status) => {
+            cardStatus[canonicalIndex] = status;
+            saveState();
+            renderStrip();
+          })
         : buildQuizCard(card, (isCorrect) => {
             cardStatus[canonicalIndex] = isCorrect ? "correct" : "wrong";
             saveState();
@@ -1817,7 +1932,7 @@ function renderContent() {
   const resetOrderBtn = document.createElement("button");
   resetOrderBtn.type = "button";
   resetOrderBtn.className = "strip-arrow reset-order-btn";
-  resetOrderBtn.textContent = "↺";
+  resetOrderBtn.textContent = "🔢";
   resetOrderBtn.setAttribute("aria-label", "Restore original order");
   resetOrderBtn.addEventListener("click", restoreOriginalOrder);
 
@@ -2210,7 +2325,7 @@ function makeThinkBadge() {
   return badge;
 }
 
-function buildThinkCard(cardData) {
+function buildThinkCard(cardData, onSelfAssess) {
   const card = document.createElement("div");
   card.className = "flashcard flashcard-main flashcard-think";
 
@@ -2228,10 +2343,15 @@ function buildThinkCard(cardData) {
   question.textContent = cardData.q;
   front.appendChild(question);
 
-  const hint = document.createElement("p");
-  hint.className = "flashcard-think-hint";
-  hint.textContent = "Work it out, then flip for a model answer.";
-  front.appendChild(hint);
+  const revealBtn = document.createElement("button");
+  revealBtn.type = "button";
+  revealBtn.className = "reveal-choices-btn";
+  revealBtn.textContent = "Think about it, then reveal ↓";
+  revealBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    card.classList.add("flipped");
+  });
+  front.appendChild(revealBtn);
 
   const back = document.createElement("div");
   back.className = "flashcard-face flashcard-back flashcard-think-back";
@@ -2244,7 +2364,7 @@ function buildThinkCard(cardData) {
   if (cardData.diagram) {
     const diagramWrap = document.createElement("div");
     diagramWrap.className = "flashcard-diagram";
-    diagramWrap.innerHTML = buildNetworkDiagram(cardData.diagram);
+    diagramWrap.innerHTML = cardData.diagram.svg ? cardData.diagram.svg : buildNetworkDiagram(cardData.diagram);
     back.appendChild(diagramWrap);
   }
 
@@ -2252,6 +2372,39 @@ function buildThinkCard(cardData) {
   explanation.className = "flashcard-explanation flashcard-think-answer";
   explanation.textContent = cardData.a;
   back.appendChild(explanation);
+
+  const assessRow = document.createElement("div");
+  assessRow.className = "think-assess-row";
+
+  const gotItBtn = document.createElement("button");
+  gotItBtn.type = "button";
+  gotItBtn.className = "think-assess-btn think-assess-good";
+  gotItBtn.textContent = "✅ Got it";
+
+  const laterBtn = document.createElement("button");
+  laterBtn.type = "button";
+  laterBtn.className = "think-assess-btn think-assess-later";
+  laterBtn.textContent = "🔁 Come back later";
+
+  function markAssessed(status, chosenBtn) {
+    gotItBtn.disabled = true;
+    laterBtn.disabled = true;
+    chosenBtn.classList.add("selected");
+    if (onSelfAssess) onSelfAssess(status);
+  }
+
+  gotItBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    markAssessed("correct", gotItBtn);
+  });
+  laterBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    markAssessed("wrong", laterBtn);
+  });
+
+  assessRow.appendChild(gotItBtn);
+  assessRow.appendChild(laterBtn);
+  back.appendChild(assessRow);
 
   inner.appendChild(front);
   inner.appendChild(back);

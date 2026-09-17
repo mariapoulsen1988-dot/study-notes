@@ -3,6 +3,7 @@ const COURSES = {
   "social-graphs": {
     label: "Social Graphs and Interactions",
     weekly: true,
+    thinkBadge: true,
     weeks: {
       1: {
         flashcards: [
@@ -1373,6 +1374,7 @@ const COURSES = {
   "good-to-know": {
     label: "Good to Know",
     weekly: false,
+    thinkBadge: false,
     weeks: {
       1: {
         flashcards: [
@@ -1883,14 +1885,15 @@ function renderContent() {
     mainWrap.innerHTML = "";
     const canonicalIndex = order[activeCardIndex];
     const card = week.flashcards[canonicalIndex];
+    const showThinkBadge = !!COURSES[activeCourse].thinkBadge;
     const builtCard =
       card.type === "think"
-        ? buildThinkCard(card, cardStatus[canonicalIndex], (status) => {
+        ? buildThinkCard(card, cardStatus[canonicalIndex], showThinkBadge, (status) => {
             cardStatus[canonicalIndex] = status;
             saveState();
             renderStrip();
           })
-        : buildQuizCard(card, (isCorrect) => {
+        : buildQuizCard(card, showThinkBadge, (isCorrect) => {
             cardStatus[canonicalIndex] = isCorrect ? "correct" : "wrong";
             saveState();
             renderStrip();
@@ -2222,7 +2225,7 @@ function buildNetworkDiagram({ directed = false, triangles = [], cutNode = null,
   );
 }
 
-function buildQuizCard(cardData, onFirstAttempt) {
+function buildQuizCard(cardData, showThinkBadge, onFirstAttempt) {
   const card = document.createElement("div");
   card.className = "flashcard flashcard-main";
 
@@ -2230,7 +2233,7 @@ function buildQuizCard(cardData, onFirstAttempt) {
   inner.className = "flashcard-inner";
 
   card.appendChild(createFlipButton(card));
-  if (cardData.think) {
+  if (cardData.think && showThinkBadge) {
     card.appendChild(makeThinkBadge());
   }
 
@@ -2361,7 +2364,7 @@ function makeThinkBadge() {
   return badge;
 }
 
-function buildThinkCard(cardData, initialStatus, onSelfAssess) {
+function buildThinkCard(cardData, initialStatus, showThinkBadge, onSelfAssess) {
   const card = document.createElement("div");
   card.className = "flashcard flashcard-main flashcard-think";
 
@@ -2369,7 +2372,9 @@ function buildThinkCard(cardData, initialStatus, onSelfAssess) {
   inner.className = "flashcard-inner";
 
   card.appendChild(createFlipButton(card));
-  card.appendChild(makeThinkBadge());
+  if (showThinkBadge) {
+    card.appendChild(makeThinkBadge());
+  }
 
   const front = document.createElement("div");
   front.className = "flashcard-face flashcard-front flashcard-quiz-front flashcard-think-front";

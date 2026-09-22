@@ -1497,6 +1497,12 @@ const COURSES = {
             q: "Using the extended Markov's inequality with f(x) = x² instead of f(x) = x (still assuming X ≥ 0), what bound do you get for P(X ≥ t), and why might it be tighter than the plain E(X)/t bound?",
             a: "X≥0 and x² is monotonically increasing on [0,∞), so X≥t ⇔ X²≥t². Applying the extended inequality with f(x)=x²: P(X≥t) = P(X²≥t²) ≤ E(X²)/t².\n\nThis can be tighter than E(X)/t because E(X²) folds in the spread of the distribution, not just its center — a distribution with the same mean but less spread gives a smaller E(X²), and therefore a tighter tail bound. This is the same trick that leads to Chebyshev's inequality.",
           },
+          {
+            q: "Closed form for the sum of consecutive integers 1+2+3+...+k = ?",
+            choices: ["k(k+1)/2", "k²/2", "k(k−1)/2", "(k+1)²/2"],
+            correct: 0,
+            a: "1+2+3+...+k = k(k+1)/2 — Gauss's trick, after the story of young Gauss pairing off terms from opposite ends to spot the shortcut.",
+          },
         ],
       },
       2: null,

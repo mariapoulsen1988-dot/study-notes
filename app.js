@@ -1503,6 +1503,18 @@ const COURSES = {
             correct: 0,
             a: "1+2+3+...+k = k(k+1)/2 — Gauss's trick, after the story of young Gauss pairing off terms from opposite ends to spot the shortcut.",
           },
+          {
+            q: "'Teljari' (the top number in a fraction) — what's the English word?",
+            choices: ["Numerator", "Denominator", "Divisor", "Quotient"],
+            correct: 0,
+            a: "Teljari = numerator, the top number. Example: in 3/4, 3 (teljari) is the numerator and 4 (nefnari) is the denominator.",
+          },
+          {
+            q: "'Nefnari' (the bottom number in a fraction) — what's the English word?",
+            choices: ["Denominator", "Numerator", "Divisor", "Remainder"],
+            correct: 0,
+            a: "Nefnari = denominator, the bottom number. Example: in 3/4, 4 (nefnari) is the denominator and 3 (teljari) is the numerator.",
+          },
         ],
       },
       2: null,
